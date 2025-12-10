@@ -1,0 +1,6 @@
+@TaskCollaborationApp.API_HostAddress = http://localhost:5090
+
+GET {{TaskCollaborationApp.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

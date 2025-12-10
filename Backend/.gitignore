@@ -1,0 +1,30 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+*.userprefs
+
+# Build logs
+*.log
+msbuild*.wrn
+msbuild*.err
+
+# NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Rider
+.idea/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
