@@ -1,0 +1,39 @@
+---
+name: User Story
+about: Create a user story for feature development
+title: '[Story]: '
+labels: 'User Story'
+assignees: ''
+---
+
+## 📋 Description
+
+As a [user role]
+I want [feature/action]
+So that [reason/value]
+
+## ✅ Acceptance Criteria (Definition of Done)
+
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+## 🛠️ Derived Technical Tasks
+
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3
+
+## 📝 Technical Notes (Optional)
+
+- Technical details here
+
+## 🔗 Related Documentation
+
+- [API Contract](./docs/api-contracts/)
+
+## ⚠️ Assignment Checklist
+
+- **Assignee**: Self-assign or assign a team member
+- **Estimate**: Set the hours/points for this story
+- **Type**: Select "User Story" in the sidebar
