@@ -102,17 +102,20 @@ Content-Type: application/json
 **Response - Success (201):**
 ```json
 {
-  "message": "User registered successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4...",
+  "expiresIn": 604800,
   "user": {
     "id": 6,
     "name": "John Doe",
     "email": "john.doe@example.com",
     "username": "johndoe",
-    "role": "User",
-    "createdAt": "2025-12-07T10:30:00Z"
+    "role": "User"
   }
 }
 ```
+
+> **Note:** Registration returns the same response format as login (`LoginResponseDto`), enabling automatic login after successful registration.
 
 **Response - Error (400) - Validation:**
 ```json

@@ -43,7 +43,6 @@ This document provides an overview of the API contracts for the Task Collaborati
 | DELETE | `/api/tasks/{id}` | Delete task | Yes |
 | GET | `/api/tasks/my` | Get current user's tasks | Yes |
 | GET | `/api/tasks/assigned` | Get tasks assigned to current user | Yes |
-| POST | `/api/tasks/{id}/comments` | Add comment to task | Yes |
 
 ### User Endpoints
 
