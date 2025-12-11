@@ -1,7 +1,7 @@
 ---
 name: User Story
 about: Create a user story for feature development
-title: "[Story]: "
+title: "[Story][domain:] "
 labels: ''
 assignees: ''
 
