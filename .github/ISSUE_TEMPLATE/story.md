@@ -1,9 +1,10 @@
 ---
 name: User Story
 about: Create a user story for feature development
-title: '[Story]: '
-labels: 'User Story'
+title: "[Story]: "
+labels: ''
 assignees: ''
+
 ---
 
 ## 📋 Description
@@ -31,9 +32,3 @@ So that [reason/value]
 ## 🔗 Related Documentation
 
 - [API Contract](./docs/api-contracts/)
-
-## ⚠️ Assignment Checklist
-
-- **Assignee**: Self-assign or assign a team member
-- **Estimate**: Set the hours/points for this story
-- **Type**: Select "User Story" in the sidebar
