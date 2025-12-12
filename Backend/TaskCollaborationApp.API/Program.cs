@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskCollaborationApp.API.Configuration;
 using TaskCollaborationApp.API.Data;
 using TaskCollaborationApp.API.Repositories;
 using TaskCollaborationApp.API.Repositories.Interfaces;
@@ -22,8 +23,25 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Service Layer - Auth Services
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(
+            "http://localhost:3000",   // React default
+            "http://localhost:5173"    // Vite default
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -42,6 +60,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
