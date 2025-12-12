@@ -44,6 +44,7 @@ namespace TaskCollaborationApp.API.Services
             // 4. Create user entity
             var user = new User
             {
+                Name = request.Name,
                 Username = request.Username,
                 Email = request.Email,
                 PasswordHash = passwordHash,
