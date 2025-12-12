@@ -1,5 +1,107 @@
 # AuthController Implementation Plan
 
+## Changes from Original Plan
+
+### JwtSettings Binding Missing in Program.cs (Bug Fix)
+
+**Original Plan:** Assumed JwtSettings was already configured in Task #6
+
+**Actual Issue:** `Configure<JwtSettings>()` was not registered in Program.cs DI container
+
+**Error Encountered:**
+```
+System.ArgumentException: IDX10703: Cannot create a 'SymmetricSecurityKey', key length is zero.
+   at JwtService.GenerateToken(User user) in JwtService.cs:line 35
+```
+
+**Root Cause Analysis:**
+
+```mermaid
+flowchart TB
+    subgraph PROBLEM["Problem: Key Length Zero"]
+        direction TB
+        JwtService["JwtService<br/>─────────────<br/>IOptions&lt;JwtSettings&gt;"]
+        Settings["JwtSettings<br/>─────────────<br/>SecretKey = ??? (empty)"]
+        Error["SymmetricSecurityKey<br/>─────────────<br/>key length is zero!"]
+
+        JwtService -->|"_jwtSettings.SecretKey"| Settings
+        Settings -->|"empty string"| Error
+    end
+
+    subgraph CAUSE["Why Empty?"]
+        direction TB
+        AppSettings["appsettings.json<br/>─────────────<br/>JwtSettings: {<br/>  SecretKey: '...'<br/>}"]
+        Program["Program.cs<br/>─────────────<br/>❌ Missing:<br/>Configure&lt;JwtSettings&gt;()"]
+        DI["DI Container<br/>─────────────<br/>IOptions&lt;JwtSettings&gt;<br/>= default (empty)"]
+
+        AppSettings -.->|"NOT bound"| Program
+        Program -->|"no binding"| DI
+    end
+
+    CAUSE --> PROBLEM
+```
+
+**Solution:**
+
+```mermaid
+flowchart LR
+    subgraph BEFORE["Before (Broken)"]
+        P1["Program.cs<br/>─────────────<br/>AddScoped&lt;IJwtService&gt;()"]
+    end
+
+    subgraph AFTER["After (Fixed)"]
+        P2["Program.cs<br/>─────────────<br/>Configure&lt;JwtSettings&gt;()<br/>AddScoped&lt;IJwtService&gt;()"]
+    end
+
+    BEFORE -->|"Add binding"| AFTER
+```
+
+**Code Added to Program.cs:**
+```csharp
+// Service Layer - Auth Services
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));  // ← Added
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+```
+
+**Options Pattern Flow (After Fix):**
+
+```mermaid
+flowchart LR
+    subgraph CONFIG["Configuration"]
+        AppSettings["appsettings.json<br/>─────────────<br/>JwtSettings: {<br/>  SecretKey,<br/>  Issuer,<br/>  Audience,<br/>  ExpirationMinutes<br/>}"]
+    end
+
+    subgraph DI["DI Container"]
+        Configure["Configure&lt;JwtSettings&gt;()<br/>─────────────<br/>Binds JSON to class"]
+        Options["IOptions&lt;JwtSettings&gt;<br/>─────────────<br/>Injected into services"]
+    end
+
+    subgraph SERVICE["Service"]
+        JwtService["JwtService<br/>─────────────<br/>_jwtSettings.SecretKey<br/>= 'YourSuperSecret...'"]
+    end
+
+    AppSettings -->|"GetSection()"| Configure
+    Configure -->|"registers"| Options
+    Options -->|"injects"| JwtService
+```
+
+**Lesson Learned:**
+- Options Pattern requires explicit `Configure<T>()` registration
+- `IOptions<T>` injection returns default values if not configured (no runtime error until used)
+- Always verify configuration binding when using Options Pattern
+
+---
+
+### Name Field Added to RegisterRequestDto (From Task #6 Bug Fix)
+
+This was already documented in Task #6 development plan. The changes carried over:
+- Added `Name` property with `[Required]`, `[MaxLength(100)]` validation
+- Data Annotations added for all fields (not just Name)
+
+---
+
 ## Overview
 
 Task #7: Create AuthController with POST `/api/auth/register` endpoint
@@ -274,11 +376,12 @@ flowchart LR
 
 ## Checklist
 
-- [ ] 1.1 Create ErrorResponseDto.cs
-- [ ] 2.1 Update RegisterRequestDto with validation attributes
-- [ ] 3.1 Create AuthController.cs
-- [ ] 4.1 Add CORS configuration to Program.cs
-- [ ] 5.1 Test success case with Swagger
-- [ ] 5.2 Test validation error case
-- [ ] 5.3 Test duplicate user error case
-- [ ] Build verification
+- [x] 1.1 Create ErrorResponseDto.cs
+- [x] 2.1 Update RegisterRequestDto with validation attributes
+- [x] 3.1 Create AuthController.cs
+- [x] 4.1 Add CORS configuration to Program.cs
+- [x] 4.2 Add JwtSettings binding to Program.cs (bug fix)
+- [x] 5.1 Test success case with Swagger (201 Created)
+- [x] 5.2 Test validation error case (400 Bad Request)
+- [x] 5.3 Test duplicate user error case (400 DUPLICATE_USER)
+- [x] Build verification
