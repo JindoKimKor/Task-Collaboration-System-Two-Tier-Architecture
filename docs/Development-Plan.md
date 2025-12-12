@@ -285,21 +285,6 @@ If this system were to evolve into microservices:
 
 ---
 
-## Current GitHub Issues Mapping
-
-| GitHub Issue | Story | Status |
-|--------------|-------|--------|
-| #3 | [Story][domain:auth] User Registration | Created |
-| #4 | Task: Create User entity (Phase 1 - no Nav Props) | Created |
-| #5 | Task: Implement UserRepository | Created |
-| #6 | Task: Implement AuthService.RegisterAsync | Created |
-| #7 | Task: Create AuthController POST /register | Created |
-| #8 | Task: Create RegisterForm component | Created |
-| #9 | Task: Implement authSlice register thunk | Created |
-| #10 | Task: Create RegisterPage | Created |
-
----
-
 ## Summary
 
 ### Key Principles
