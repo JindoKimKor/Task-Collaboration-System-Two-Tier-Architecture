@@ -33,6 +33,37 @@ AuthService
 
 ---
 
+### Name Field Missing in RegisterRequestDto (Bug Fix)
+
+**Original Plan:** `RegisterRequestDto` with Username, Email, Password only
+
+**Actual Requirement:** `Name` field is required per Final Project PDF and API Contract
+
+**What Was Missing:**
+1. `RegisterRequestDto.cs` - Missing `Name` property
+2. `AuthService.cs` - Missing `Name = request.Name` mapping in User creation
+
+**Why It Was Missed:**
+- Original development plan listed only Username, Email, Password (Line 136-138)
+- Did not cross-reference with Final Project PDF Users Table schema
+
+**Files Modified:**
+
+| File | Change |
+|------|--------|
+| `RegisterRequestDto.cs` | Added `Name` property with validation attributes |
+| `AuthService.cs` | Added `Name = request.Name` in User entity creation |
+
+**Validation Attributes Added:**
+- Data Annotations for format validation (Required, MaxLength, MinLength, EmailAddress)
+- Business validation (Unique check) remains in Service layer via `ExistsAsync()`
+
+**Lesson Learned:**
+- Always verify DTO fields against source documents (Final Project PDF, API Contract)
+- Cross-reference Entity properties with DTO properties
+
+---
+
 ## Overview
 
 Task #6: Implement `AuthService.RegisterAsync` - User registration functionality
