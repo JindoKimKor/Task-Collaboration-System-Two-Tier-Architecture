@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using TaskCollaborationApp.API.Data;
 using TaskCollaborationApp.API.Repositories;
 using TaskCollaborationApp.API.Repositories.Interfaces;
+using TaskCollaborationApp.API.Services;
+using TaskCollaborationApp.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>  options.UseInMem
 // Data Layer - Repository Pattern (DI Registration)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Service Layer - Auth Services
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
