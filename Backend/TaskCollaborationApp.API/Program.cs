@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskCollaborationApp.API.Data;
+using TaskCollaborationApp.API.Repositories;
+using TaskCollaborationApp.API.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,10 @@ builder.Services.AddSwaggerGen();
 
 // Data Layer - Database (In-Memory)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>  options.UseInMemoryDatabase("TaskCollaborationDb"));
+
+// Data Layer - Repository Pattern (DI Registration)
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
