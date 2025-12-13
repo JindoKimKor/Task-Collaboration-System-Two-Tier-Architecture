@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/store/authSlice";
+import taskReducer from "../features/task/store/taskSlice";
 
 /**
  * store - Redux 전역 상태 저장소
@@ -14,7 +15,7 @@ import authReducer from "../features/auth/store/authSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // task: taskReducer, (Phase 2에서 추가)
+    task: taskReducer,
     // user: userReducer, (Phase 3에서 추가)
   },
 });

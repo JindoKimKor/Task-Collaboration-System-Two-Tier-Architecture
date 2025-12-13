@@ -1,6 +1,23 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RegisterPage } from "../features/auth/pages/RegisterPage";
 import { LoginPage } from "../features/auth/pages/LoginPage";
+import { BoardPage } from "../features/task/pages/BoardPage";
+
+/**
+ * ProtectedRoute - 인증된 사용자만 접근 가능한 라우트
+ *
+ * Client 활용:
+ * - 로그인하지 않은 사용자가 /board 접근 시 /login으로 리다이렉트
+ */
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 /**
  * AppRouter - 앱 전체 라우팅 정의
@@ -12,7 +29,8 @@ import { LoginPage } from "../features/auth/pages/LoginPage";
  * 현재 라우트:
  * - /login: 로그인 페이지
  * - /register: 회원가입 페이지
- * - / : 로그인 페이지로 리다이렉트
+ * - /board: Kanban 보드 (로그인 필요)
+ * - / : /board로 리다이렉트
  */
 export const AppRouter = () => {
   return (
@@ -24,17 +42,18 @@ export const AppRouter = () => {
         {/* 회원가입 페이지 */}
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* 홈 - 로그인 페이지로 이동 */}
+        {/* Kanban 보드 (Protected) */}
         <Route
-          path="/"
+          path="/board"
           element={
-            <div className="min-h-screen flex items-center justify-center">
-              <a href="/login" className="text-blue-600 hover:underline">
-                Go to Login
-              </a>
-            </div>
+            <ProtectedRoute>
+              <BoardPage />
+            </ProtectedRoute>
           }
         />
+
+        {/* 홈 - /board로 리다이렉트 */}
+        <Route path="/" element={<Navigate to="/board" replace />} />
       </Routes>
     </BrowserRouter>
   );
