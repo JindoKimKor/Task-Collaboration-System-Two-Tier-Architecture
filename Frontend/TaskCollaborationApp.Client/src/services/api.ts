@@ -12,7 +12,7 @@ import type { AuthResponse } from "../features/auth/types/api.types";
  * 다른 feature(Task, User)에서도 이 instance를 import해서 사용
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://localhost:7158/api",
+  baseURL: import.meta.env.VITE_API_URL || "https://localhost:5001/api",
   headers: {
     "Content-Type": "application/json",
   },

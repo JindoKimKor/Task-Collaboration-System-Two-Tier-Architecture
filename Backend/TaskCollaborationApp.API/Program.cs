@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using TaskCollaborationApp.API.Configuration;
 using TaskCollaborationApp.API.Data;
+using TaskCollaborationApp.API.Hubs;
 using TaskCollaborationApp.API.Repositories;
 using TaskCollaborationApp.API.Repositories.Interfaces;
 using TaskCollaborationApp.API.Services;
@@ -62,6 +63,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Service Layer - Task Services
 builder.Services.AddScoped<ITaskService, TaskService>();
+
+// SignalR
+builder.Services.AddSignalR();
 
 // Security Layer - JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -121,5 +125,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<TaskHub>("/hubs/tasks");
 
 app.Run();
