@@ -21,7 +21,7 @@ export { RegisterForm } from "./components/RegisterForm";
 export { LoginForm } from "./components/LoginForm";
 
 // ============================================
-// Pages (Task #10)
+// Pages (Task #10, #17)
 // ============================================
 
 /**
@@ -29,6 +29,12 @@ export { LoginForm } from "./components/LoginForm";
  * Client 활용: /register 경로에서 렌더링
  */
 export { RegisterPage } from "./pages/RegisterPage";
+
+/**
+ * LoginPage - 로그인 페이지 (Container)
+ * Client 활용: /login 경로에서 렌더링
+ */
+export { LoginPage } from "./pages/LoginPage";
 
 // ============================================
 // Hooks (Task #8)

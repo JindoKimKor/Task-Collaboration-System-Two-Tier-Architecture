@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RegisterPage } from "../features/auth/pages/RegisterPage";
+import { LoginPage } from "../features/auth/pages/LoginPage";
 
 /**
  * AppRouter - 앱 전체 라우팅 정의
@@ -9,23 +10,27 @@ import { RegisterPage } from "../features/auth/pages/RegisterPage";
  * - 새 페이지 추가 시 이 파일에 Route 추가
  *
  * 현재 라우트:
+ * - /login: 로그인 페이지
  * - /register: 회원가입 페이지
- * - / : 임시 홈 (나중에 redirect 추가)
+ * - / : 로그인 페이지로 리다이렉트
  */
 export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* 로그인 페이지 */}
+        <Route path="/login" element={<LoginPage />} />
+
         {/* 회원가입 페이지 */}
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* 임시 홈 - 나중에 LoginPage 또는 redirect로 변경 */}
+        {/* 홈 - 로그인 페이지로 이동 */}
         <Route
           path="/"
           element={
             <div className="min-h-screen flex items-center justify-center">
-              <a href="/register" className="text-blue-600 hover:underline">
-                Go to Register
+              <a href="/login" className="text-blue-600 hover:underline">
+                Go to Login
               </a>
             </div>
           }
