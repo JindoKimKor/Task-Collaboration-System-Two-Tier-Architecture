@@ -54,6 +54,7 @@ export const login = createAsyncThunk(
       const response = await authService.login(data);
       // 성공 시 token을 localStorage에 저장 (새로고침 후에도 유지)
       localStorage.setItem("token", response.token);
+      localStorage.setItem("refreshToken", response.refreshToken);
       return response;
     } catch (error: unknown) {
       // 서버 에러 메시지 추출하여 반환
@@ -94,6 +95,7 @@ export const fetchCurrentUser = createAsyncThunk(
     } catch (error: unknown) {
       // 401 에러 시 토큰 삭제 (만료 또는 무효)
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
       if (error instanceof Error && "response" in error) {
         const axiosError = error as {
           response?: { status?: number; data?: { message?: string } };
@@ -128,6 +130,7 @@ export const googleLogin = createAsyncThunk(
       const response = await authService.googleLogin(idToken);
       // 성공 시 token을 localStorage에 저장 (새로고침 후에도 유지)
       localStorage.setItem("token", response.token);
+      localStorage.setItem("refreshToken", response.refreshToken);
       return response;
     } catch (error: unknown) {
       // 서버 에러 메시지 추출하여 반환
