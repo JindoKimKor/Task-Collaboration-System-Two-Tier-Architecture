@@ -33,5 +33,14 @@ namespace TaskCollaborationApp.API.Services.Interfaces
         /// <param name="userId">User ID from JWT NameIdentifier claim</param>
         /// <returns>User DTO if found, null if user doesn't exist</returns>
         Task<UserDto?> GetCurrentUserAsync(int userId);
+
+        /// <summary>
+        /// Authenticates user with Google ID token.
+        /// Validates token with Google, finds or creates user, returns JWT.
+        /// </summary>
+        /// <param name="idToken">Google ID token from Google Sign-In</param>
+        /// <returns>Login response with JWT token and user info</returns>
+        /// <exception cref="InvalidOperationException">Thrown when Google token is invalid</exception>
+        Task<LoginResponseDto> GoogleAuthAsync(string idToken);
     }
 }

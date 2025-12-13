@@ -118,5 +118,49 @@ namespace TaskCollaborationApp.API.Services
                 CreatedAt = user.CreatedAt
             };
         }
+
+        /// <inheritdoc />
+        public async Task<LoginResponseDto> GoogleAuthAsync(string idToken)
+        {
+            // 1. Validate Google ID token
+            var payload = await Google.Apis.Auth.GoogleJsonWebSignature.ValidateAsync(idToken);
+
+            // 2. Find existing user by email
+            var user = await _unitOfWork.Users.FindByEmailAsync(payload.Email);
+
+            // 3. If user doesn't exist, create new one
+            if (user == null)
+            {
+                // Determine role
+                var adminEmail = _configuration["AdminEmail"];
+                var role = payload.Email == adminEmail ? "Admin" : "User";
+
+                user = new User
+                {
+                    Email = payload.Email,
+                    Name = payload.Name ?? payload.Email.Split('@')[0],
+                    Username = payload.Email.Split('@')[0],
+                    PasswordHash = "",  // OAuth users don't have password
+                    Role = role,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _unitOfWork.Users.AddAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+            }
+
+            // 4. Generate JWT token
+            var token = _jwtService.GenerateToken(user);
+
+            // 5. Return response
+            return new LoginResponseDto
+            {
+                Token = token,
+                UserId = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role
+            };
+        }
     }
 }

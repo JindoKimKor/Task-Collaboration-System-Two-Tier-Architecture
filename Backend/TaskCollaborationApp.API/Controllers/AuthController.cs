@@ -91,5 +91,28 @@ namespace TaskCollaborationApp.API.Controllers
 
             return Ok(user);
         }
+
+        /// <summary>
+        /// Authenticate user with Google ID token.
+        /// </summary>
+        [HttpPost("google")]
+        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthRequestDto request)
+        {
+            try
+            {
+                var result = await _authService.GoogleAuthAsync(request.IdToken);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponseDto
+                {
+                    Error = "GOOGLE_AUTH_FAILED",
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }
