@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { fetchCurrentUser } from "./features/auth";
 import { AppRouter } from "./router/AppRouter";
 
 /**
@@ -8,6 +11,16 @@ import { AppRouter } from "./router/AppRouter";
  * - AppRouter를 통해 모든 페이지 라우팅 처리
  */
 function App() {
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && !isAuthenticated) {
+      dispatch(fetchCurrentUser());
+    }
+  }, []);
+
   return <AppRouter />;
 }
 
