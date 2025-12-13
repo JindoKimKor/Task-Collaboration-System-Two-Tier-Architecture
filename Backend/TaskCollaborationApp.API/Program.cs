@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using TaskCollaborationApp.API.BackgroundServices;
 using TaskCollaborationApp.API.Configuration;
 using TaskCollaborationApp.API.Data;
 using TaskCollaborationApp.API.Hubs;
@@ -70,6 +71,9 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 // Service Layer - Cache Services
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<ICacheService, CacheService>();
+
+// Background Services
+builder.Services.AddHostedService<TaskArchiveBackgroundService>();
 
 // SignalR
 builder.Services.AddSignalR();

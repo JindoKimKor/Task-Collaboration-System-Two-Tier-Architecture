@@ -40,14 +40,20 @@ export const TaskCard = ({ task, onClick }: TaskCardProps) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 cursor-pointer 
-                 hover:shadow-md hover:border-gray-300 transition-all duration-200"
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 p-3 cursor-pointer 
+               hover:shadow-md hover:border-gray-300 transition-all duration-200
+               ${task.isArchived ? "opacity-50" : ""}`}
     >
       {/* Task ID Badge */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
           #{task.id}
         </span>
+        {task.isArchived && (
+          <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded">
+            Archived
+          </span>
+        )}
       </div>
 
       {/* Title */}

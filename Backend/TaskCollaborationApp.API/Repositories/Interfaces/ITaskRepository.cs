@@ -37,5 +37,11 @@ namespace TaskCollaborationApp.API.Repositories.Interfaces
         /// </summary>
         Task<(IEnumerable<TaskItem> Items, int TotalCount)> GetByAssigneeAsync(
             int userId, int page, int pageSize);
+
+        /// <summary>
+        /// Gets tasks that are ready to be archived.
+        /// Conditions: Status == Done, IsArchived == false, UpdatedAt older than specified delay.
+        /// </summary>
+        Task<IEnumerable<TaskItem>> GetTasksToArchiveAsync();
     }
 }

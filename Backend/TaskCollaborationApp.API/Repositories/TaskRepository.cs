@@ -125,5 +125,17 @@ namespace TaskCollaborationApp.API.Repositories
 
             return (items, totalCount);
         }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TaskItem>> GetTasksToArchiveAsync()
+        {
+            var archiveThreshold = DateTime.UtcNow.AddSeconds(-5);
+
+            return await _dbSet
+                .Where(t => t.Status == TaskStatus.Done &&
+                            !t.IsArchived &&
+                            t.UpdatedAt < archiveThreshold)
+                .ToListAsync();
+        }
     }
 }
