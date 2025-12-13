@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RegisterPage } from "../features/auth/pages/RegisterPage";
 import { LoginPage } from "../features/auth/pages/LoginPage";
 import { BoardPage } from "../features/task/pages/BoardPage";
+import { TaskDetailsPage } from "../features/task/pages/TaskDetailsPage";
 
 /**
  * ProtectedRoute - 인증된 사용자만 접근 가능한 라우트
@@ -30,6 +31,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
  * - /login: 로그인 페이지
  * - /register: 회원가입 페이지
  * - /board: Kanban 보드 (로그인 필요)
+ * - /tasks/:id: 태스크 상세 페이지 (로그인 필요)  // 추가
  * - / : /board로 리다이렉트
  */
 export const AppRouter = () => {
@@ -48,6 +50,16 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute>
               <BoardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 태스크 상세 페이지 (Protected) */}
+        <Route
+          path="/tasks/:id"
+          element={
+            <ProtectedRoute>
+              <TaskDetailsPage />
             </ProtectedRoute>
           }
         />

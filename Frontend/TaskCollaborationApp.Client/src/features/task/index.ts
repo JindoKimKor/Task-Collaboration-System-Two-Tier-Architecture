@@ -21,7 +21,7 @@ export { TaskColumn } from "./components/TaskColumn";
 export { KanbanBoard } from "./components/KanbanBoard";
 
 // ============================================
-// Pages (Task #34)
+// Pages (Task #34, #36)
 // ============================================
 
 /**
@@ -29,6 +29,12 @@ export { KanbanBoard } from "./components/KanbanBoard";
  * Client 활용: /board 경로에서 렌더링
  */
 export { BoardPage } from "./pages/BoardPage";
+
+/**
+ * TaskDetailsPage - 태스크 상세 페이지 (Container)
+ * Client 활용: /tasks/:id 경로에서 렌더링
+ */
+export { TaskDetailsPage } from "./pages/TaskDetailsPage";
 
 // ============================================
 // Store (Task #33)
