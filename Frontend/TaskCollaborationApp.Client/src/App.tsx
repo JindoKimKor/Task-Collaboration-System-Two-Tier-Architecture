@@ -9,6 +9,7 @@ import {
   taskUpdatedFromSignalR,
   taskDeletedFromSignalR,
 } from "./features/task/store/taskSlice";
+import { ToastContainer, addToast } from "./features/toast";
 
 /**
  * App - 애플리케이션 루트 컴포넌트
@@ -43,14 +44,32 @@ function App() {
         // Register global event handlers
         signalRService.onTaskCreated((data) => {
           dispatch(taskCreatedFromSignalR(data.task));
+          dispatch(
+            addToast({
+              type: "success",
+              message: `New task created: ${data.task.title}`,
+            })
+          );
         });
 
         signalRService.onTaskUpdated((data) => {
           dispatch(taskUpdatedFromSignalR(data.task));
+          dispatch(
+            addToast({
+              type: "info",
+              message: `Task updated: ${data.task.title}`,
+            })
+          );
         });
 
         signalRService.onTaskDeleted((data) => {
           dispatch(taskDeletedFromSignalR(data.taskId));
+          dispatch(
+            addToast({
+              type: "warning",
+              message: `Task deleted (ID: ${data.taskId})`,
+            })
+          );
         });
       } catch (error) {
         console.error("SignalR connection failed:", error);
@@ -79,6 +98,7 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <ToastContainer />
       <AppRouter />
     </GoogleOAuthProvider>
   );
