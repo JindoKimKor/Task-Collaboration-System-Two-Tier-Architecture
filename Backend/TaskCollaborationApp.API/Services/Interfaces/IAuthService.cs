@@ -42,5 +42,14 @@ namespace TaskCollaborationApp.API.Services.Interfaces
         /// <returns>Login response with JWT token and user info</returns>
         /// <exception cref="InvalidOperationException">Thrown when Google token is invalid</exception>
         Task<LoginResponseDto> GoogleAuthAsync(string idToken);
+
+        /// <summary>
+        /// Refreshes access token using a valid refresh token.
+        /// Validates refresh token, generates new access and refresh tokens.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token to validate</param>
+        /// <returns>Login response with new tokens and user info</returns>
+        /// <exception cref="UnauthorizedAccessException">Thrown when refresh token is invalid or expired</exception>
+        Task<LoginResponseDto> RefreshTokenAsync(string refreshToken);
     }
 }

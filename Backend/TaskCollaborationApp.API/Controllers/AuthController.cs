@@ -114,5 +114,28 @@ namespace TaskCollaborationApp.API.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Refresh access token using refresh token.
+        /// </summary>
+        [HttpPost("refresh")]
+        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto request)
+        {
+            try
+            {
+                var result = await _authService.RefreshTokenAsync(request.RefreshToken);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new ErrorResponseDto
+                {
+                    Error = "INVALID_REFRESH_TOKEN",
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }
