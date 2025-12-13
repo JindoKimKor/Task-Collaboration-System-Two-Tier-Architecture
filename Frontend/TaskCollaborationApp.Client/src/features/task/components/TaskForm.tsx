@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { TaskStatus } from "../types/api.types";
+import { userService } from "../../user";
+import type { UserListItemDto } from "../../user";
 
 /**
  * TASK_STATUSES - 폼에서 선택 가능한 상태 목록
@@ -62,9 +64,28 @@ export const TaskForm = ({
   const [status, setStatus] = useState<TaskStatus>(
     initialValues?.status || "ToDo"
   );
-  const [assignedToId] = useState<number | null>(
+  const [assignedToId, setAssignedToId] = useState<number | null>(
     initialValues?.assignedToId || null
   );
+
+  // 사용자 목록 상태
+  const [users, setUsers] = useState<UserListItemDto[]>([]);
+  const [usersLoading, setUsersLoading] = useState(true);
+
+  // 사용자 목록 로드
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const data = await userService.getAllUsers();
+        setUsers(data);
+      } catch (error) {
+        console.error("Failed to load users:", error);
+      } finally {
+        setUsersLoading(false);
+      }
+    };
+    loadUsers();
+  }, []);
 
   // 유효성 검사 에러
   const [errors, setErrors] = useState<{ title?: string }>({});
@@ -167,14 +188,33 @@ export const TaskForm = ({
         </select>
       </div>
 
-      {/* Assignee - TODO: User dropdown (Phase 3) */}
+      {/* Assignee */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="assignedTo"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Assign to
         </label>
-        <p className="text-sm text-gray-500 italic">
-          User selection will be available in Phase 3
-        </p>
+        <select
+          id="assignedTo"
+          value={assignedToId ?? ""}
+          onChange={(e) =>
+            setAssignedToId(e.target.value ? Number(e.target.value) : null)
+          }
+          disabled={usersLoading}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+        >
+          <option value="">Unassigned</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.name} ({user.initials})
+            </option>
+          ))}
+        </select>
+        {usersLoading && (
+          <p className="mt-1 text-xs text-gray-500">Loading users...</p>
+        )}
       </div>
 
       {/* Buttons */}

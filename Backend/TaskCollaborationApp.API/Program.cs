@@ -51,6 +51,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>  options.UseInMem
 // Data Layer - Repository Pattern (DI Registration)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Service Layer - Auth Services
