@@ -1,4 +1,5 @@
 ﻿using TaskCollaborationApp.API.Data.Entities;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace TaskCollaborationApp.API.Data
 {
@@ -11,11 +12,11 @@ namespace TaskCollaborationApp.API.Data
 
             var users = new List<User>
             {
-                new User { Name = "Admin User",    Email = "admin@taskcollab.com",    Username = "admin",       PasswordHash = "", Role = "Admin", CreatedAt = DateTime.UtcNow },
-                new User { Name = "John Doe",      Email = "john@example.com",        Username = "johndoe",     PasswordHash = "", Role = "User",  CreatedAt = DateTime.UtcNow },
-                new User { Name = "Jane Smith",    Email = "jane@example.com",        Username = "janesmith",   PasswordHash = "", Role = "User",  CreatedAt = DateTime.UtcNow },
-                new User { Name = "Mike Johnson",  Email = "mike@example.com",        Username = "mikejohnson", PasswordHash = "", Role = "User",  CreatedAt = DateTime.UtcNow },
-                new User { Name = "Sarah Chen",    Email = "sarah@example.com",       Username = "sarahchen",   PasswordHash = "", Role = "User",  CreatedAt = DateTime.UtcNow },
+                new User { Name = "Admin User",    Email = "admin@taskcollab.com",    Username = "admin",       PasswordHash = BCryptNet.HashPassword("Admin123!"), Role = "Admin", CreatedAt = DateTime.UtcNow },
+                new User { Name = "John Doe",      Email = "john@example.com",        Username = "johndoe",     PasswordHash = BCryptNet.HashPassword("User123!"),  Role = "User",  CreatedAt = DateTime.UtcNow },
+                new User { Name = "Jane Smith",    Email = "jane@example.com",        Username = "janesmith",   PasswordHash = BCryptNet.HashPassword("User123!"),  Role = "User",  CreatedAt = DateTime.UtcNow },
+                new User { Name = "Mike Johnson",  Email = "mike@example.com",        Username = "mikejohnson", PasswordHash = BCryptNet.HashPassword("User123!"),  Role = "User",  CreatedAt = DateTime.UtcNow },
+                new User { Name = "Sarah Chen",    Email = "sarah@example.com",       Username = "sarahchen",   PasswordHash = BCryptNet.HashPassword("User123!"),  Role = "User",  CreatedAt = DateTime.UtcNow },
             };
 
             context.Users.AddRange(users);

@@ -39,5 +39,28 @@ namespace TaskCollaborationApp.API.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Authenticate user with username/email and password.
+        /// </summary>
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        {
+            try
+            {
+                var result = await _authService.LoginAsync(request);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new ErrorResponseDto
+                {
+                    Error = "INVALID_CREDENTIALS",
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }

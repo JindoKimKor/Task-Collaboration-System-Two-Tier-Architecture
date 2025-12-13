@@ -69,5 +69,36 @@ namespace TaskCollaborationApp.API.Services
                 Role = user.Role
             };
         }
+
+        /// <inheritdoc />
+        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+        {
+            // 1. Find user by username or email
+            var user = await _unitOfWork.Users.FindByEmailOrUsernameAsync(request.UsernameOrEmail);
+
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("Invalid credentials.");
+            }
+
+            // 2. Verify password
+            if (!BCryptNet.Verify(request.Password, user.PasswordHash))
+            {
+                throw new UnauthorizedAccessException("Invalid credentials.");
+            }
+
+            // 3. Generate JWT token
+            var token = _jwtService.GenerateToken(user);
+
+            // 4. Return response
+            return new LoginResponseDto
+            {
+                Token = token,
+                UserId = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role
+            };
+        }
     }
 }

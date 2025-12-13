@@ -16,5 +16,16 @@ namespace TaskCollaborationApp.API.Services.Interfaces
         /// <returns>Login response with JWT token and user info</returns>
         /// <exception cref="InvalidOperationException">Thrown when email or username already exists</exception>
         Task<LoginResponseDto> RegisterAsync(RegisterRequestDto request);
+
+        /// <summary>
+        /// Authenticates user with username/email and password.
+        /// Verifies password with BCrypt and returns JWT token.
+        /// </summary>
+        /// <param name="request">Login data (usernameOrEmail, password)</param>
+        /// <returns>Login response with JWT token and user info</returns>
+        /// <exception cref="UnauthorizedAccessException">Thrown when credentials are invalid</exception>
+        Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
+
+
     }
 }
