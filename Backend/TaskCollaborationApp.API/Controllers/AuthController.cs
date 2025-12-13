@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TaskCollaborationApp.API.Controllers.DTOs.Auth;
 using TaskCollaborationApp.API.Controllers.DTOs.Common;
 using TaskCollaborationApp.API.Services.Interfaces;
@@ -61,6 +63,33 @@ namespace TaskCollaborationApp.API.Controllers
                     Message = ex.Message
                 });
             }
+        }
+
+        /// <summary>
+        /// Get current authenticated user's information.
+        /// </summary>
+        [HttpGet("me")]
+        [Authorize]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _authService.GetCurrentUserAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
         }
     }
 }

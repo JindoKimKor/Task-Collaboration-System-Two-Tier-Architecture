@@ -26,6 +26,12 @@ namespace TaskCollaborationApp.API.Services.Interfaces
         /// <exception cref="UnauthorizedAccessException">Thrown when credentials are invalid</exception>
         Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
 
-
+        /// <summary>
+        /// Gets current authenticated user's information.
+        /// Retrieves user from database by ID extracted from JWT claims.
+        /// </summary>
+        /// <param name="userId">User ID from JWT NameIdentifier claim</param>
+        /// <returns>User DTO if found, null if user doesn't exist</returns>
+        Task<UserDto?> GetCurrentUserAsync(int userId);
     }
 }

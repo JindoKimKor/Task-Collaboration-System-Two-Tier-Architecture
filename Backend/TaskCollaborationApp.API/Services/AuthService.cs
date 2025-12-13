@@ -100,5 +100,23 @@ namespace TaskCollaborationApp.API.Services
                 Role = user.Role
             };
         }
+
+        /// <inheritdoc />
+        public async Task<UserDto?> GetCurrentUserAsync(int userId)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+
+            if (user == null) return null;
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            };
+        }
     }
 }
