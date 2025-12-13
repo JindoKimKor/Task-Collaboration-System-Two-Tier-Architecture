@@ -1,5 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchTasks, fetchTaskById } from "./taskThunks";
+import {
+  fetchTasks,
+  fetchTaskById,
+  createTask,
+  updateTask,
+  deleteTask,
+} from "./taskThunks";
+
 import type { TaskState } from "../types/state.types";
 
 /**
@@ -90,6 +97,67 @@ const taskSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         state.selectedTask = null;
+      })
+      // ============================================
+      // CreateTask Thunk (Task #37)
+      // ============================================
+      .addCase(createTask.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.loading = false;
+        // 새 Task를 목록 맨 앞에 추가
+        state.tasks.unshift(action.payload);
+        state.totalCount += 1;
+      })
+      .addCase(createTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // ============================================
+      // UpdateTask Thunk (Task #40)
+      // ============================================
+      .addCase(updateTask.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.loading = false;
+        // 목록에서 해당 Task 업데이트
+        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+        // selectedTask도 업데이트 (상세 페이지에서 수정 후 돌아올 때)
+        if (state.selectedTask?.id === action.payload.id) {
+          state.selectedTask = action.payload;
+        }
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // ============================================
+      // DeleteTask Thunk (Task #42)
+      // ============================================
+      .addCase(deleteTask.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.loading = false;
+        // 목록에서 해당 Task 제거
+        state.tasks = state.tasks.filter((t) => t.id !== action.payload);
+        state.totalCount -= 1;
+        // selectedTask 초기화
+        if (state.selectedTask?.id === action.payload) {
+          state.selectedTask = null;
+        }
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

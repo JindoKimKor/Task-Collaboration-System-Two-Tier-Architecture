@@ -59,3 +59,27 @@ export interface TaskQueryParams {
   createdBy?: number;
   search?: string;
 }
+
+/**
+ * CreateTaskRequestDto - 태스크 생성 요청
+ *
+ * POST /api/tasks 요청 body
+ */
+export interface CreateTaskRequestDto {
+  title: string;
+  description?: string | null;
+  status: TaskStatus;
+  assignedToId?: number | null;
+}
+
+/**
+ * UpdateTaskRequestDto - 태스크 수정 요청
+ *
+ * PUT /api/tasks/{id} 요청 body
+ */
+export interface UpdateTaskRequestDto {
+  title: string;
+  description?: string | null;
+  status: TaskStatus;
+  assignedToId?: number | null;
+}

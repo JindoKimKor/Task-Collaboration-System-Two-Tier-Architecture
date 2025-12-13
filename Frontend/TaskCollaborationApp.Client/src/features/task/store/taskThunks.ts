@@ -1,6 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { taskService } from "../services/taskService";
-import type { TaskQueryParams } from "../types/api.types";
+import type {
+  TaskQueryParams,
+  CreateTaskRequestDto,
+  UpdateTaskRequestDto,
+} from "../types/api.types";
 
 /**
  * fetchTasks - 태스크 목록 조회 비동기 액션
@@ -69,6 +73,111 @@ export const fetchTaskById = createAsyncThunk(
         );
       }
       return rejectWithValue("Failed to load task");
+    }
+  }
+);
+
+/**
+ * createTask - 새 태스크 생성 비동기 액션
+ *
+ * Client 활용:
+ * - CreateTaskPage에서 dispatch(createTask(data)) 호출
+ * - pending: 로딩 스피너 표시
+ * - fulfilled: /board로 리다이렉트
+ * - rejected: 에러 메시지 표시
+ *
+ * 언제 호출되는가:
+ * - CreateTaskPage에서 폼 제출 시
+ */
+export const createTask = createAsyncThunk(
+  "task/createTask",
+  async (data: CreateTaskRequestDto, { rejectWithValue }) => {
+    try {
+      const response = await taskService.createTask(data);
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { data?: { message?: string } };
+        };
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Failed to create task"
+        );
+      }
+      return rejectWithValue("Failed to create task");
+    }
+  }
+);
+
+/**
+ * updateTask - 태스크 수정 비동기 액션
+ *
+ * Client 활용:
+ * - EditTaskPage에서 dispatch(updateTask({ id, data })) 호출
+ * - pending: 로딩 스피너 표시
+ * - fulfilled: /tasks/:id로 리다이렉트
+ * - rejected: 에러 메시지 표시 (403 권한 없음 등)
+ *
+ * 언제 호출되는가:
+ * - EditTaskPage에서 폼 제출 시
+ */
+export const updateTask = createAsyncThunk(
+  "task/updateTask",
+  async (
+    { id, data }: { id: number; data: UpdateTaskRequestDto },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await taskService.updateTask(id, data);
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; data?: { message?: string } };
+        };
+        if (axiosError.response?.status === 403) {
+          return rejectWithValue("You are not authorized to edit this task");
+        }
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Failed to update task"
+        );
+      }
+      return rejectWithValue("Failed to update task");
+    }
+  }
+);
+
+/**
+ * deleteTask - 태스크 삭제 비동기 액션
+ *
+ * Client 활용:
+ * - TaskDetailsPage에서 dispatch(deleteTask(id)) 호출
+ * - pending: 삭제 버튼 로딩 상태
+ * - fulfilled: /board로 리다이렉트
+ * - rejected: 에러 메시지 표시 (403 권한 없음 등)
+ *
+ * 언제 호출되는가:
+ * - TaskDetailsPage에서 삭제 확인 후
+ */
+export const deleteTask = createAsyncThunk(
+  "task/deleteTask",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      await taskService.deleteTask(id);
+      return id; // 삭제된 ID 반환 (tasks 배열에서 제거용)
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; data?: { message?: string } };
+        };
+        if (axiosError.response?.status === 403) {
+          return rejectWithValue("You are not authorized to delete this task");
+        }
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Failed to delete task"
+        );
+      }
+      return rejectWithValue("Failed to delete task");
     }
   }
 );

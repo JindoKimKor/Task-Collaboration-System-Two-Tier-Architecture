@@ -1,16 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { fetchTaskById } from "../store/taskThunks";
+import { fetchTaskById, deleteTask } from "../store/taskThunks";
 import { clearSelectedTask } from "../store/taskSlice";
 import type { TaskStatus } from "../types/api.types";
 
 /**
  * STATUS_COLORS - 상태별 배지 색상
- *
- * Client 활용:
- * - TaskDetailsPage에서 상태 배지 색상 표시
- * - TaskColumn의 COLUMN_COLORS와 동일한 색상 체계
  */
 const STATUS_COLORS: Record<
   TaskStatus,
@@ -28,14 +24,8 @@ const STATUS_COLORS: Record<
  *
  * Client 활용:
  * - /tasks/:id 경로에서 렌더링
- * - URL 파라미터에서 taskId 추출하여 데이터 로드
- * - Two-column layout: 왼쪽(제목, 설명) / 오른쪽(메타 정보)
- *
- * 데이터 흐름:
- * 1. useParams()로 id 추출
- * 2. dispatch(fetchTaskById(id))
- * 3. selectedTask에서 데이터 읽기
- * 4. unmount 시 clearSelectedTask()
+ * - Edit/Delete 버튼 (권한 있을 때만 표시)
+ * - 삭제 확인 모달
  */
 export const TaskDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +34,11 @@ export const TaskDetailsPage = () => {
   const { selectedTask, loading, error } = useAppSelector(
     (state) => state.task
   );
+  const { user } = useAppSelector((state) => state.auth);
+
+  // 삭제 확인 모달 상태
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // 데이터 로드
   useEffect(() => {
@@ -51,14 +46,34 @@ export const TaskDetailsPage = () => {
       dispatch(fetchTaskById(Number(id)));
     }
 
-    // Cleanup: 페이지 나갈 때 selectedTask 초기화
     return () => {
       dispatch(clearSelectedTask());
     };
   }, [dispatch, id]);
 
+  // 권한 체크 (Creator 또는 Admin)
+  const canModify =
+    user?.id === selectedTask?.createdBy.id || user?.role === "Admin";
+
+  /**
+   * handleDelete - 삭제 실행
+   */
+  const handleDelete = async () => {
+    if (!id) return;
+
+    setIsDeleting(true);
+    const result = await dispatch(deleteTask(Number(id)));
+
+    if (deleteTask.fulfilled.match(result)) {
+      navigate("/board");
+    } else {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
+
   // 로딩 상태
-  if (loading) {
+  if (loading && !selectedTask) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-gray-500">Loading task...</div>
@@ -66,7 +81,7 @@ export const TaskDetailsPage = () => {
     );
   }
 
-  // 에러 상태 (404 포함)
+  // 에러 상태
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
@@ -81,7 +96,6 @@ export const TaskDetailsPage = () => {
     );
   }
 
-  // Task 없음
   if (!selectedTask) {
     return null;
   }
@@ -93,7 +107,6 @@ export const TaskDetailsPage = () => {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          {/* Breadcrumb */}
           <nav className="text-sm text-gray-500 mb-2">
             <Link to="/board" className="hover:text-blue-600">
               Board
@@ -107,12 +120,11 @@ export const TaskDetailsPage = () => {
         </div>
       </header>
 
-      {/* Main Content - Two Column Layout */}
+      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Main Content (2/3) */}
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Description Card */}
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Description
@@ -123,7 +135,7 @@ export const TaskDetailsPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Sidebar (1/3) */}
+          {/* Right Column */}
           <div className="space-y-6">
             {/* Status Card */}
             <div className="bg-white rounded-lg shadow p-6">
@@ -202,12 +214,32 @@ export const TaskDetailsPage = () => {
               </div>
             </div>
 
-            {/* Actions Card (Edit/Delete - Future) */}
+            {/* Actions Card */}
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-sm font-medium text-gray-500 mb-3">
                 Actions
               </h3>
               <div className="space-y-2">
+                {/* Edit Button (권한 있을 때만) */}
+                {canModify && (
+                  <button
+                    onClick={() => navigate(`/tasks/${id}/edit`)}
+                    className="w-full px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
+                  >
+                    Edit Task
+                  </button>
+                )}
+
+                {/* Delete Button (권한 있을 때만) */}
+                {canModify && (
+                  <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="w-full px-4 py-2 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+                  >
+                    Delete Task
+                  </button>
+                )}
+
                 <button
                   onClick={() => navigate("/board")}
                   className="w-full px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200"
@@ -219,6 +251,37 @@ export const TaskDetailsPage = () => {
           </div>
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Delete Task
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete "{selectedTask.title}"? This
+              action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700 disabled:opacity-50"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

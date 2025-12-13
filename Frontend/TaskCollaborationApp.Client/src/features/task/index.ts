@@ -20,8 +20,14 @@ export { TaskColumn } from "./components/TaskColumn";
  */
 export { KanbanBoard } from "./components/KanbanBoard";
 
+/**
+ * TaskForm - 태스크 생성/수정 폼 컴포넌트
+ * Client 활용: CreateTaskPage, EditTaskPage에서 렌더링
+ */
+export { TaskForm } from "./components/TaskForm";
+
 // ============================================
-// Pages (Task #34, #36)
+// Pages (Task #34, #35, #38, #39, #41)
 // ============================================
 
 /**
@@ -35,6 +41,18 @@ export { BoardPage } from "./pages/BoardPage";
  * Client 활용: /tasks/:id 경로에서 렌더링
  */
 export { TaskDetailsPage } from "./pages/TaskDetailsPage";
+
+/**
+ * CreateTaskPage - 태스크 생성 페이지 (Container)
+ * Client 활용: /tasks/new 경로에서 렌더링
+ */
+export { CreateTaskPage } from "./pages/CreateTaskPage";
+
+/**
+ * EditTaskPage - 태스크 수정 페이지 (Container)
+ * Client 활용: /tasks/:id/edit 경로에서 렌더링
+ */
+export { EditTaskPage } from "./pages/EditTaskPage";
 
 // ============================================
 // Store (Task #33)
@@ -57,6 +75,24 @@ export { fetchTasks } from "./store/taskThunks";
  * Client 활용: TaskDetailsPage에서 dispatch(fetchTaskById(id))
  */
 export { fetchTaskById } from "./store/taskThunks";
+
+/**
+ * createTask - 태스크 생성 async thunk
+ * Client 활용: CreateTaskPage에서 dispatch(createTask(data))
+ */
+export { createTask } from "./store/taskThunks";
+
+/**
+ * updateTask - 태스크 수정 async thunk
+ * Client 활용: EditTaskPage에서 dispatch(updateTask({ id, data }))
+ */
+export { updateTask } from "./store/taskThunks";
+
+/**
+ * deleteTask - 태스크 삭제 async thunk
+ * Client 활용: TaskDetailsPage에서 dispatch(deleteTask(id))
+ */
+export { deleteTask } from "./store/taskThunks";
 
 /**
  * clearError - 에러 메시지 초기화 액션
@@ -94,6 +130,8 @@ export type {
   TaskResponseDto,
   TaskListResponseDto,
   TaskQueryParams,
+  CreateTaskRequestDto,
+  UpdateTaskRequestDto,
 } from "./types/api.types";
 
 /**

@@ -3,6 +3,8 @@ import type {
   TaskResponseDto,
   TaskListResponseDto,
   TaskQueryParams,
+  CreateTaskRequestDto,
+  UpdateTaskRequestDto,
 } from "../types/api.types";
 
 /**
@@ -78,5 +80,50 @@ export const taskService = {
       params,
     });
     return response.data;
+  },
+
+  /**
+   * createTask - 새 태스크 생성
+   *
+   * Client 활용:
+   * - CreateTaskPage에서 dispatch(createTask(data)) 호출
+   * - 성공 시 생성된 TaskResponseDto 반환
+   *
+   * @param data - 생성할 태스크 데이터
+   */
+  createTask: async (data: CreateTaskRequestDto): Promise<TaskResponseDto> => {
+    const response = await api.post<TaskResponseDto>("/tasks", data);
+    return response.data;
+  },
+
+  /**
+   * updateTask - 태스크 수정
+   *
+   * Client 활용:
+   * - EditTaskPage에서 dispatch(updateTask({ id, data })) 호출
+   * - 성공 시 수정된 TaskResponseDto 반환
+   *
+   * @param id - 수정할 태스크 ID
+   * @param data - 수정할 데이터
+   */
+  updateTask: async (
+    id: number,
+    data: UpdateTaskRequestDto
+  ): Promise<TaskResponseDto> => {
+    const response = await api.put<TaskResponseDto>(`/tasks/${id}`, data);
+    return response.data;
+  },
+
+  /**
+   * deleteTask - 태스크 삭제
+   *
+   * Client 활용:
+   * - TaskDetailsPage에서 dispatch(deleteTask(id)) 호출
+   * - 성공 시 204 No Content (반환값 없음)
+   *
+   * @param id - 삭제할 태스크 ID
+   */
+  deleteTask: async (id: number): Promise<void> => {
+    await api.delete(`/tasks/${id}`);
   },
 };

@@ -62,7 +62,15 @@ export const BoardPage = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-full mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">Task Board</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold text-gray-900">Task Board</h1>
+            <button
+              onClick={() => navigate("/tasks/new")}
+              className="px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
+            >
+              + Create Task
+            </button>
+          </div>
           <div className="flex items-center gap-4">
             {user && (
               <span className="text-sm text-gray-600">
