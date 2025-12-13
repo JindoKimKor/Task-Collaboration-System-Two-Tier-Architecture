@@ -26,12 +26,13 @@ const STATUS_COLORS: Record<
  * - /tasks/:id 경로에서 렌더링
  * - Edit/Delete 버튼 (권한 있을 때만 표시)
  * - 삭제 확인 모달
+ * - 캐시 상태 배지 표시 (Task #64)
  */
 export const TaskDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { selectedTask, loading, error } = useAppSelector(
+  const { selectedTask, loading, error, cacheStatus } = useAppSelector(
     (state) => state.task
   );
   const { user } = useAppSelector((state) => state.auth);
@@ -113,6 +114,18 @@ export const TaskDetailsPage = () => {
             </Link>
             <span className="mx-2">/</span>
             <span className="text-gray-900">Task #{selectedTask.id}</span>
+            {/* Cache Status Badge (Task #64) */}
+            {cacheStatus && (
+              <span
+                className={`ml-2 px-2 py-0.5 rounded text-xs font-medium ${
+                  cacheStatus === "HIT"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
+                Cache: {cacheStatus}
+              </span>
+            )}
           </nav>
           <h1 className="text-2xl font-bold text-gray-900">
             {selectedTask.title}

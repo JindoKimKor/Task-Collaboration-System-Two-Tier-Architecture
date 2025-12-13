@@ -31,7 +31,7 @@ namespace TaskCollaborationApp.API.Services.Interfaces
         /// <summary>
         /// Gets a single task by ID.
         /// </summary>
-        Task<TaskResponseDto?> GetTaskByIdAsync(int id);
+        Task<(TaskResponseDto? task, bool cacheHit)> GetTaskByIdAsync(int id);
 
         /// <summary>
         /// Gets tasks created by a specific user.

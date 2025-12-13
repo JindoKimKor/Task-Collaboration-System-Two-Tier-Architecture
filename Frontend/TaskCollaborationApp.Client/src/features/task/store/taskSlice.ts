@@ -18,10 +18,12 @@ import type { TaskResponseDto } from "../types/api.types";
  * Client 활용:
  * - 앱 로드 시 빈 태스크 목록으로 시작
  * - BoardPage에서 fetchTasks() 호출 후 데이터 로드
+ * - cacheStatus는 TaskDetailsPage에서 캐시 배지 표시용 (Task #64)
  */
 const initialState: TaskState = {
   tasks: [],
   selectedTask: null,
+  cacheStatus: null,
   totalCount: 0,
   page: 1,
   pageSize: 100, // Kanban은 전체 로드
@@ -55,14 +57,16 @@ const taskSlice = createSlice({
     },
 
     /**
-     * clearSelectedTask - 선택된 태스크 초기화
+     * clearSelectedTask - 선택된 태스크 및 캐시 상태 초기화
      *
      * Client 활용:
      * - TaskDetailsPage에서 나갈 때 이전 태스크 정보 제거
      * - 다른 태스크 상세 페이지로 이동 시 이전 데이터 깜빡임 방지
+     * - cacheStatus도 함께 초기화 (Task #64)
      */
     clearSelectedTask: (state) => {
       state.selectedTask = null;
+      state.cacheStatus = null;
     },
 
     // ============================================
@@ -143,7 +147,8 @@ const taskSlice = createSlice({
       })
       .addCase(fetchTaskById.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedTask = action.payload;
+        state.selectedTask = action.payload.data;
+        state.cacheStatus = action.payload.cacheStatus;
       })
       .addCase(fetchTaskById.rejected, (state, action) => {
         state.loading = false;

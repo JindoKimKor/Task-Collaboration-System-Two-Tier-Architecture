@@ -14,11 +14,19 @@ namespace TaskCollaborationApp.API.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationService _notificationService;
+        private readonly ICacheService _cacheService;
+        private readonly int _simulatedDelaySeconds;
 
-        public TaskService(IUnitOfWork unitOfWork, INotificationService notificationService)
+        public TaskService(
+            IUnitOfWork unitOfWork,
+            INotificationService notificationService,
+            ICacheService cacheService,
+            IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
+            _cacheService = cacheService;
+            _simulatedDelaySeconds = configuration.GetValue<int>("CacheSettings:SimulatedDelaySeconds", 2);
         }
 
         /// <inheritdoc />
@@ -45,10 +53,32 @@ namespace TaskCollaborationApp.API.Services
         }
 
         /// <inheritdoc />
-        public async Task<TaskResponseDto?> GetTaskByIdAsync(int id)
+        public async Task<(TaskResponseDto? task, bool cacheHit)> GetTaskByIdAsync(int id)
         {
+            var cacheKey = $"task_{id}";
+
+            // Check cache first
+            var cachedTask = _cacheService.Get<TaskResponseDto>(cacheKey);
+            if (cachedTask != null)
+            {
+                return (cachedTask, true); // Cache HIT
+            }
+
+            // Cache MISS - simulate database delay for demo
+            await Task.Delay(TimeSpan.FromSeconds(_simulatedDelaySeconds));
+
             var task = await _unitOfWork.Tasks.GetByIdWithDetailsAsync(id);
-            return task == null ? null : MapToDto(task);
+            if (task == null)
+            {
+                return (null, false);
+            }
+
+            var dto = MapToDto(task);
+
+            // Store in cache
+            _cacheService.Set(cacheKey, dto);
+
+            return (dto, false); // Cache MISS
         }
 
         /// <inheritdoc />
@@ -148,6 +178,9 @@ namespace TaskCollaborationApp.API.Services
             await _unitOfWork.Tasks.EditAsync(task);
             await _unitOfWork.SaveChangesAsync();
 
+            // Invalidate cache
+            _cacheService.Remove($"task_{id}");
+
             // Reload with navigation properties
             var updatedTask = await _unitOfWork.Tasks.GetByIdWithDetailsAsync(id);
             var response = MapToDto(updatedTask!);
@@ -176,6 +209,9 @@ namespace TaskCollaborationApp.API.Services
 
             await _unitOfWork.Tasks.DeleteAsync(task);
             await _unitOfWork.SaveChangesAsync();
+
+            // Invalidate cache
+            _cacheService.Remove($"task_{id}");
 
             // Send real-time notification
             await _notificationService.NotifyTaskDeletedAsync(id);

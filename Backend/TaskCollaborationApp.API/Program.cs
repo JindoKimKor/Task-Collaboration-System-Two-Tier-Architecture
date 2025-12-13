@@ -67,6 +67,10 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 // Service Layer - Notification Services
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
+// Service Layer - Cache Services
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICacheService, CacheService>();
+
 // SignalR
 builder.Services.AddSignalR();
 
@@ -117,7 +121,8 @@ builder.Services.AddCors(options =>
         )
         .AllowAnyMethod()
         .AllowAnyHeader()
-        .AllowCredentials();
+        .AllowCredentials()
+        .WithExposedHeaders("X-Cache");
     });
 });
 

@@ -55,7 +55,10 @@ namespace TaskCollaborationApp.API.Controllers
         [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetTask(int id)
         {
-            var task = await _taskService.GetTaskByIdAsync(id);
+            var (task, cacheHit) = await _taskService.GetTaskByIdAsync(id);
+
+            // Set X-Cache header
+            Response.Headers["X-Cache"] = cacheHit ? "HIT" : "MISS";
 
             if (task == null)
             {

@@ -32,18 +32,24 @@ export const taskService = {
   },
 
   /**
-   * getTaskById - 단일 태스크 조회
+   * getTaskById - 단일 태스크 조회 (캐시 상태 포함)
    *
    * Client 활용:
    * - TaskDetailsPage에서 dispatch(fetchTaskById(id)) 호출
    * - thunk가 이 함수를 호출하여 서버에 요청
-   * - 성공 시 TaskResponseDto 반환 → thunk가 selectedTask 업데이트
+   * - 성공 시 TaskResponseDto + cacheStatus 반환
+   * - cacheStatus는 X-Cache 헤더에서 추출 (HIT/MISS)
    *
    * @param id - 조회할 태스크 ID
+   * @returns data: 태스크 정보, cacheStatus: 캐시 HIT/MISS
    */
-  getTaskById: async (id: number): Promise<TaskResponseDto> => {
+  getTaskById: async (
+    id: number
+  ): Promise<{ data: TaskResponseDto; cacheStatus: "HIT" | "MISS" }> => {
     const response = await api.get<TaskResponseDto>(`/tasks/${id}`);
-    return response.data;
+    const cacheStatus =
+      (response.headers["x-cache"] as "HIT" | "MISS") || "MISS";
+    return { data: response.data, cacheStatus };
   },
 
   /**

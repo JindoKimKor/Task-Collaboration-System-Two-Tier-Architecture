@@ -42,13 +42,17 @@ export const fetchTasks = createAsyncThunk(
 );
 
 /**
- * fetchTaskById - 단일 태스크 조회 비동기 액션
+ * fetchTaskById - 단일 태스크 조회 비동기 액션 (캐시 상태 포함)
  *
  * Client 활용:
  * - TaskDetailsPage에서 dispatch(fetchTaskById(id)) 호출
  * - pending: 로딩 스피너 표시
- * - fulfilled: 태스크 상세 정보 표시
+ * - fulfilled: 태스크 상세 정보 + 캐시 상태 배지 표시 (Task #64)
  * - rejected: 에러 메시지 표시 ("Task not found" 등)
+ *
+ * 반환값:
+ * - data: TaskResponseDto - 태스크 정보
+ * - cacheStatus: "HIT" | "MISS" - X-Cache 헤더 값
  *
  * 언제 호출되는가:
  * - TaskDetailsPage 마운트 시 (URL에서 id 추출)

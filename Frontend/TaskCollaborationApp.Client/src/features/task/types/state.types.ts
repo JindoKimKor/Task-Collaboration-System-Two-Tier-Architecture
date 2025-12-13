@@ -9,8 +9,11 @@ export interface TaskState {
   /** 현재 로드된 태스크 목록 */
   tasks: TaskResponseDto[];
 
-  /** 상세 페이지에서 선택된 단일 태스크 (future use) */
+  /** 상세 페이지에서 선택된 단일 태스크 */
   selectedTask: TaskResponseDto | null;
+
+  /** 캐시 상태 (X-Cache 헤더 값) - TaskDetailsPage에서 배지 표시용 */
+  cacheStatus: "HIT" | "MISS" | null;
 
   /** 전체 태스크 개수 (페이지네이션용) */
   totalCount: number;

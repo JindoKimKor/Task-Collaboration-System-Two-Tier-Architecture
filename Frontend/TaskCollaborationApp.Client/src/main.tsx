@@ -14,9 +14,9 @@ import "./index.css";
  * - 앱 최상단에 위치해야 모든 컴포넌트가 접근 가능
  */
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </StrictMode>
+  // <StrictMode>
+  <Provider store={store}>
+    <App />
+  </Provider>
+  // </StrictMode>
 );
