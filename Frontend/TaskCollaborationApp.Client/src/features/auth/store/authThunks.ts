@@ -69,3 +69,43 @@ export const login = createAsyncThunk(
     }
   }
 );
+
+/**
+ * fetchCurrentUser - 현재 사용자 정보 조회 비동기 액션
+ *
+ * Client 활용:
+ * - App.tsx에서 앱 시작 시 dispatch(fetchCurrentUser()) 호출
+ * - localStorage에 token이 있을 때만 호출
+ * - pending: 로딩 스피너 표시
+ * - fulfilled: 사용자 상태 복원, isAuthenticated = true
+ * - rejected: 토큰 무효 → localStorage 클리어, 로그인 페이지로
+ *
+ * 언제 호출되는가:
+ * - 브라우저 새로고침 시 (Redux store 초기화됨)
+ * - 탭 재방문 시
+ * - 앱 최초 로드 시
+ */
+export const fetchCurrentUser = createAsyncThunk(
+  "auth/fetchCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authService.fetchCurrentUser();
+      return response;
+    } catch (error: unknown) {
+      // 401 에러 시 토큰 삭제 (만료 또는 무효)
+      localStorage.removeItem("token");
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; data?: { message?: string } };
+        };
+        if (axiosError.response?.status === 401) {
+          return rejectWithValue("Session expired. Please login again.");
+        }
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Failed to fetch user"
+        );
+      }
+      return rejectWithValue("Failed to fetch user");
+    }
+  }
+);

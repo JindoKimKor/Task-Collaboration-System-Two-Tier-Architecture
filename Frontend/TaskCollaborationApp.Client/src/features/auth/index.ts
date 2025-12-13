@@ -47,7 +47,7 @@ export { LoginPage } from "./pages/LoginPage";
 export { useRegisterForm } from "./hooks/useRegisterForm";
 
 // ============================================
-// Store (Task #9, #16)
+// Store (Task #9, #16, #22)
 // ============================================
 
 /**
@@ -67,6 +67,12 @@ export { register } from "./store/authThunks";
  * Client 활용: LoginPage에서 dispatch(login(formData))
  */
 export { login } from "./store/authThunks";
+
+/**
+ * fetchCurrentUser - 현재 사용자 정보 조회 async thunk
+ * Client 활용: App.tsx에서 앱 시작 시 dispatch(fetchCurrentUser())
+ */
+export { fetchCurrentUser } from "./store/authThunks";
 
 /**
  * logout - 로그아웃 액션
@@ -118,4 +124,8 @@ export type { User, AuthState } from "./types/state.types";
  * API Types - API 요청/응답 관련 타입
  * Client 활용: authService, authSlice thunk
  */
-export type { AuthResponse, LoginCredentials } from "./types/api.types";
+export type {
+  AuthResponse,
+  LoginCredentials,
+  UserResponse,
+} from "./types/api.types";

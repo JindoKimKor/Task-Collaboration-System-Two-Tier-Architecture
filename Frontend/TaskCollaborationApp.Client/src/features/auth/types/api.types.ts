@@ -31,3 +31,30 @@ export interface LoginCredentials {
   usernameOrEmail: string;
   password: string;
 }
+
+// ============================================
+// API Types (Task #22)
+// ============================================
+
+/**
+ * UserResponse - GET /api/auth/me 응답
+ *
+ * Client 활용:
+ * - 앱 새로고침 시 현재 사용자 정보 복원
+ * - fetchCurrentUser thunk에서 반환 타입으로 사용
+ *
+ * AuthResponse와 차이:
+ * - token 없음 (이미 인증된 상태이므로)
+ * - createdAt 포함 (Backend UserDto에서 반환)
+ *
+ * Backend 매핑:
+ * - UserDto.cs의 응답 구조와 일치
+ */
+export interface UserResponse {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  role: "Admin" | "User";
+  createdAt: string;
+}

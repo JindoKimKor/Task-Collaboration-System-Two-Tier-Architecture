@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register, login } from "./authThunks";
+import { register, login, fetchCurrentUser } from "./authThunks";
 import type { AuthState } from "../types/state.types";
 
 /**
@@ -94,6 +94,32 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      // ============================================
+      // FetchCurrentUser Thunk (Task #22)
+      // ============================================
+      .addCase(fetchCurrentUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = {
+          id: action.payload.id,
+          name: action.payload.name,
+          email: action.payload.email,
+          username: action.payload.username,
+          role: action.payload.role,
+        };
+        state.token = localStorage.getItem("token");
+        state.isAuthenticated = true;
+      })
+      .addCase(fetchCurrentUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
       });
   },
 });

@@ -1,6 +1,6 @@
 import api from "../../../services/api";
 import type { RegisterFormData, LoginFormData } from "../types/form.types";
-import type { AuthResponse } from "../types/api.types";
+import type { AuthResponse, UserResponse } from "../types/api.types";
 
 /**
  * authService - Auth 관련 API 호출을 담당
@@ -45,6 +45,25 @@ export const authService = {
       usernameOrEmail: data.usernameOrEmail,
       password: data.password,
     });
+    return response.data;
+  },
+
+  /**
+   * fetchCurrentUser - 현재 로그인된 사용자 정보 조회
+   *
+   * Client 활용:
+   * - 앱 시작 시 localStorage에 token이 있으면 호출
+   * - dispatch(fetchCurrentUser()) → 이 함수 호출 → Redux store 업데이트
+   *
+   * 토큰 전송:
+   * - api.ts의 interceptor가 localStorage의 token을 자동으로 헤더에 첨부
+   * - 별도로 token을 파라미터로 받을 필요 없음
+   *
+   * 에러 처리:
+   * - 401 Unauthorized: 토큰 만료/무효 → thunk에서 localStorage 클리어
+   */
+  fetchCurrentUser: async (): Promise<UserResponse> => {
+    const response = await api.get<UserResponse>("/auth/me");
     return response.data;
   },
 };
