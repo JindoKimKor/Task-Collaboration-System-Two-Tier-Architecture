@@ -1,0 +1,22 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskCollaborationApp.API.Controllers.DTOs.Task
+{
+    /// <summary>
+    /// Request body for updating an existing task.
+    /// </summary>
+    public class UpdateTaskRequestDto
+    {
+        [Required(ErrorMessage = "Title is required")]
+        [MaxLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
+        public string Title { get; set; } = string.Empty;
+
+        [MaxLength(2000, ErrorMessage = "Description cannot exceed 2000 characters")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Status is required")]
+        public string Status { get; set; } = string.Empty;
+
+        public int? AssignedToId { get; set; }
+    }
+}

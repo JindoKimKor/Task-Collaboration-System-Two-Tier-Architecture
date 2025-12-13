@@ -50,6 +50,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>  options.UseInMem
 
 // Data Layer - Repository Pattern (DI Registration)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Service Layer - Auth Services
@@ -57,6 +58,9 @@ builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Service Layer - Task Services
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 // Security Layer - JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

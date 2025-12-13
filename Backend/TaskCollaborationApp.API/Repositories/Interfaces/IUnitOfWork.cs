@@ -12,6 +12,11 @@
         IUserRepository Users { get; }
 
         /// <summary>
+        /// Gets the Task repository instance.
+        /// </summary>
+        ITaskRepository Tasks { get; }
+
+        /// <summary>
         /// Persists all pending changes to the database.
         /// </summary>
         Task<int> SaveChangesAsync();

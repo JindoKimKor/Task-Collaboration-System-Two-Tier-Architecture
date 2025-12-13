@@ -14,11 +14,17 @@ namespace TaskCollaborationApp.API.Repositories
         private IDbContextTransaction? _transaction;
 
         public IUserRepository Users { get; }
+        public ITaskRepository Tasks { get; }
 
-        public UnitOfWork(ApplicationDbContext context, IUserRepository userRepository)
+
+        public UnitOfWork(
+            ApplicationDbContext context,
+            IUserRepository userRepository,
+            ITaskRepository taskRepository)
         {
             _context = context;
             Users = userRepository;
+            Tasks = taskRepository;
         }
 
         /// <inheritdoc />
