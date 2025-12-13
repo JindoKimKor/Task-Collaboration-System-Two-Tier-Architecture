@@ -1,5 +1,5 @@
 import api from "../../../services/api";
-import type { RegisterFormData } from "../types/form.types";
+import type { RegisterFormData, LoginFormData } from "../types/form.types";
 import type { AuthResponse } from "../types/api.types";
 
 /**
@@ -32,5 +32,19 @@ export const authService = {
     return response.data;
   },
 
-  // login은 Story 1.2에서 구현 예정
+  /**
+   * login - 로그인 API 호출
+   *
+   * Client 활용:
+   * - LoginPage에서 폼 제출 시 dispatch(login(formData)) 호출
+   * - thunk가 이 함수를 호출하여 서버에 요청
+   * - 성공 시 AuthResponse 반환 → thunk가 Redux store 업데이트
+   */
+  login: async (data: LoginFormData): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>("/auth/login", {
+      usernameOrEmail: data.usernameOrEmail,
+      password: data.password,
+    });
+    return response.data;
+  },
 };

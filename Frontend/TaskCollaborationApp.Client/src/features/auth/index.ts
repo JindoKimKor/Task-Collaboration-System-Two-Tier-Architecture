@@ -41,7 +41,7 @@ export { RegisterPage } from "./pages/RegisterPage";
 export { useRegisterForm } from "./hooks/useRegisterForm";
 
 // ============================================
-// Store (Task #9)
+// Store (Task #9, #16)
 // ============================================
 
 /**
@@ -54,7 +54,13 @@ export { default as authReducer } from "./store/authSlice";
  * register - 회원가입 async thunk
  * Client 활용: RegisterPage에서 dispatch(register(formData))
  */
-export { register } from "./store/authSlice";
+export { register } from "./store/authThunks";
+
+/**
+ * login - 로그인 async thunk
+ * Client 활용: LoginPage에서 dispatch(login(formData))
+ */
+export { login } from "./store/authThunks";
 
 /**
  * logout - 로그아웃 액션

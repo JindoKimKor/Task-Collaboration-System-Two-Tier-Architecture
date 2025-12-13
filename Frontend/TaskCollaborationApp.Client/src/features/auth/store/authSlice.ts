@@ -1,7 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { authService } from "../services/authService";
+import { createSlice } from "@reduxjs/toolkit";
+import { register, login } from "./authThunks";
 import type { AuthState } from "../types/state.types";
-import type { RegisterFormData } from "../types/form.types";
 
 /**
  * initialState - 앱 시작 시 auth 상태의 초기값
@@ -19,45 +18,15 @@ const initialState: AuthState = {
 };
 
 /**
- * register - 회원가입 비동기 액션
- *
- * Client 활용:
- * - RegisterPage에서 dispatch(register(formData)) 호출
- * - pending: 버튼 비활성화, "Registering..." 표시
- * - fulfilled: 로그인 상태로 전환, /board로 이동
- * - rejected: 에러 메시지 표시 ("Email already exists" 등)
- *
- * localStorage 저장: 새로고침 후에도 로그인 유지하기 위해
- */
-export const register = createAsyncThunk(
-  "auth/register",
-  async (data: RegisterFormData, { rejectWithValue }) => {
-    try {
-      const response = await authService.register(data);
-      // 성공 시 token을 localStorage에 저장 (새로고침 후에도 유지)
-      localStorage.setItem("token", response.token);
-      return response;
-    } catch (error: unknown) {
-      // 서버 에러 메시지 추출하여 반환
-      if (error instanceof Error && "response" in error) {
-        const axiosError = error as {
-          response?: { data?: { message?: string } };
-        };
-        return rejectWithValue(
-          axiosError.response?.data?.message || "Registration failed"
-        );
-      }
-      return rejectWithValue("Registration failed");
-    }
-  }
-);
-
-/**
  * authSlice - Auth 상태 관리의 핵심
  *
  * Client 활용:
  * - reducers: 동기 액션 (logout, clearError)
  * - extraReducers: 비동기 액션의 상태 변화 처리 (pending/fulfilled/rejected)
+ *
+ * Slice vs Thunk:
+ * - Slice: 상태 정의 + 상태 변경 방법 (순수 함수)
+ * - Thunk: 비동기 작업 수행 (API 호출, localStorage 등)
  */
 const authSlice = createSlice({
   name: "auth",
@@ -92,20 +61,37 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // register.pending - API 호출 시작
+      // ============================================
+      // Register Thunk (Task #9)
+      // ============================================
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      // register.fulfilled - API 성공
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
       })
-      // register.rejected - API 실패
       .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // ============================================
+      // Login Thunk (Task #16)
+      // ============================================
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+      })
+      .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

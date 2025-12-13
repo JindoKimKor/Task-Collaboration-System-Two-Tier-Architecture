@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { register } from "../store/authSlice";
+import { register } from "../store/authThunks";
 import { RegisterForm } from "../components/RegisterForm";
 import type { RegisterFormData } from "../types/form.types";
 
