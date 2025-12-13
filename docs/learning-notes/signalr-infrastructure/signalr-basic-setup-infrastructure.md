@@ -8,7 +8,9 @@ Backend, Frontend, Browser, Network 레이어를 모두 포함합니다.
 **관련 구현:**
 - Task #51: Backend TaskHub
 - Task #52: Frontend SignalR Client
-- (향후) Task #53+: Real-time notifications
+- Task #54-56: Real-time notifications (✅ 완료)
+
+**아키텍처 발전 문서:** [03-architecture-evolution-story53.md](./03-architecture-evolution-story53.md)
 
 ---
 
@@ -269,17 +271,29 @@ sequenceDiagram
 | SignalR Service Registration | `Backend/Program.cs` | ✅ |
 | Hub Endpoint Mapping | `Backend/Program.cs` | ✅ |
 | signalRService | `Frontend/services/signalRService.ts` | ✅ |
-| BoardPage Connection | `Frontend/pages/BoardPage.tsx` | ✅ |
+| BoardPage Connection | `Frontend/pages/BoardPage.tsx` | ✅ → App.tsx로 이동 |
 | CORS Configuration | `Backend/Program.cs` | ✅ |
+
+### ✅ Implemented (Story #53)
+
+| Component | Location | Status |
+|-----------|----------|--------|
+| INotificationService | `Backend/Services/Interfaces/` | ✅ Task #54 |
+| NotificationService | `Backend/Services/` | ✅ Task #54 |
+| TaskService 연동 | `Backend/Services/TaskService.cs` | ✅ Task #55 |
+| Event Handlers | `Frontend/services/signalRService.ts` | ✅ Task #56 |
+| SignalR Reducers | `Frontend/features/task/store/taskSlice.ts` | ✅ Task #56 |
+| App-Level Connection | `Frontend/App.tsx` | ✅ Task #56 |
+| JWT SignalR Auth | `Backend/Program.cs` | ✅ Bug Fix |
 
 ### 🔜 Planned (Future Tasks)
 
 | Component | Description | Task # |
 |-----------|-------------|--------|
-| NotificationService | Send events from services | TBD |
-| Client Event Handlers | Receive and process events | TBD |
-| Redux Integration | Update store on events | TBD |
-| Reconnection Handling | UI feedback on disconnect | TBD |
+| Personal Notifications | Send to specific user | TBD |
+| Notification UI | Toast/Badge display | TBD |
+| Notification History | DB storage and retrieval | TBD |
+| Redis Backplane | Multi-server support | TBD |
 
 ---
 
@@ -367,7 +381,10 @@ User joined TaskBoard group: {userId}
 |----------|------|-------------|
 | Backend Hub | `learning-notes/backend/51-signalr-hub/` | TaskHub implementation |
 | Frontend Client | `learning-notes/frontend/52-signalr-client/` | SignalR service |
-| (Future) Notifications | TBD | Real-time event handling |
+| Architecture Evolution | `03-architecture-evolution-story53.md` | Story #53 아키텍처 변화 |
+| App vs Page Level | `01-app-level-vs-page-level.md` | 연결 관리 위치 비교 |
+| camelCase 직렬화 | `02-camelcase-serialization.md` | JSON 데이터 형식 변환 |
+| Frontend Task #56 | `learning-notes/frontend/56-signalr-event-handling/` | SignalR 이벤트 핸들링 |
 
 ---
 
@@ -377,4 +394,7 @@ User joined TaskBoard group: {userId}
 |------|------|---------|
 | 2024-XX-XX | #51 | TaskHub created, Program.cs configured |
 | 2024-XX-XX | #52 | signalRService.ts, BoardPage integration |
-| | | (향후 추가 예정) |
+| 2024-12-13 | #54 | INotificationService, NotificationService 추가 |
+| 2024-12-13 | #55 | TaskService에서 NotificationService 호출 |
+| 2024-12-13 | #56 | Frontend Event Handlers, Redux 통합, App-Level 연결 |
+| 2024-12-13 | Bug Fix | JWT SignalR 인증 (Query String), camelCase 수정 |
