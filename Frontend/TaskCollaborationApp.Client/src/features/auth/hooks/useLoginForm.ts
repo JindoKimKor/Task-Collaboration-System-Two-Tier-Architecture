@@ -1,21 +1,21 @@
 import { useState } from "react";
-import type { RegisterFormData, ValidationErrors } from "../types/form.types";
+import type { LoginFormData, LoginValidationErrors } from "../types/form.types";
 import {
-  validateField,
-  validateForm,
-} from "../utils/validation/register.validation";
+  validateLoginField,
+  validateLoginForm,
+} from "../utils/validation/login.validation";
 
 /**
- * useRegisterForm - 회원가입 폼 상태 관리 커스텀 훅
+ * useLoginForm - 로그인 폼 상태 관리 커스텀 훅
  *
  * Client 활용:
- * - RegisterForm 컴포넌트가 마운트될 때 호출
+ * - LoginForm 컴포넌트가 마운트될 때 호출
  * - 폼의 모든 상태(입력값, 에러, 터치 여부)를 관리
  * - 이벤트 핸들러를 반환하여 FormInput에 전달
  *
- * @param onSubmit - 폼이 유효할 때 호출될 콜백 (RegisterPage에서 Redux dispatch 실행)
+ * @param onSubmit - 폼이 유효할 때 호출될 콜백 (LoginPage에서 Redux dispatch 실행)
  */
-export const useRegisterForm = (onSubmit: (data: RegisterFormData) => void) => {
+export const useLoginForm = (onSubmit: (data: LoginFormData) => void) => {
   /**
    * formData - 각 입력 필드의 현재 값
    *
@@ -23,12 +23,9 @@ export const useRegisterForm = (onSubmit: (data: RegisterFormData) => void) => {
    * - FormInput의 value prop으로 전달 (controlled component)
    * - 타이핑할 때마다 handleChange가 업데이트
    */
-  const [formData, setFormData] = useState<RegisterFormData>({
-    name: "",
-    email: "",
-    username: "",
+  const [formData, setFormData] = useState<LoginFormData>({
+    usernameOrEmail: "",
     password: "",
-    confirmPassword: "",
   });
 
   /**
@@ -38,7 +35,7 @@ export const useRegisterForm = (onSubmit: (data: RegisterFormData) => void) => {
    * - FormInput의 error prop으로 전달 (빨간 테두리 + 에러 메시지 표시)
    * - blur 시 해당 필드만 업데이트, submit 시 전체 업데이트
    */
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<LoginValidationErrors>({});
 
   /**
    * touched - 각 필드를 사용자가 건드렸는지 여부
@@ -62,7 +59,7 @@ export const useRegisterForm = (onSubmit: (data: RegisterFormData) => void) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
 
     // 타이핑 시작하면 에러 제거
-    if (errors[name as keyof ValidationErrors]) {
+    if (errors[name as keyof LoginValidationErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
@@ -80,10 +77,9 @@ export const useRegisterForm = (onSubmit: (data: RegisterFormData) => void) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
 
     // 해당 필드만 검증
-    const error = validateField(
-      name as keyof RegisterFormData,
-      formData[name as keyof RegisterFormData],
-      formData
+    const error = validateLoginField(
+      name as keyof LoginFormData,
+      formData[name as keyof LoginFormData]
     );
 
     if (error) {
@@ -104,16 +100,13 @@ export const useRegisterForm = (onSubmit: (data: RegisterFormData) => void) => {
     e.preventDefault();
 
     // 전체 필드 검증
-    const validationErrors = validateForm(formData);
+    const validationErrors = validateLoginForm(formData);
     setErrors(validationErrors);
 
     // 모든 필드를 touched로 설정 (모든 에러 표시)
     setTouched({
-      name: true,
-      email: true,
-      username: true,
+      usernameOrEmail: true,
       password: true,
-      confirmPassword: true,
     });
 
     // 에러 없으면 onSubmit 콜백 실행

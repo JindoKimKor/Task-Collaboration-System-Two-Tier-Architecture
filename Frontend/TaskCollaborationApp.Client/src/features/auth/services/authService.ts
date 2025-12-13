@@ -1,5 +1,6 @@
 import api from "../../../services/api";
-import type { RegisterFormData, AuthResponse } from "../types";
+import type { RegisterFormData } from "../types/form.types";
+import type { AuthResponse } from "../types/api.types";
 
 /**
  * authService - Auth 관련 API 호출을 담당

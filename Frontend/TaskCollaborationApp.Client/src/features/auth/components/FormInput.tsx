@@ -1,4 +1,4 @@
-import type { FormInputProps } from "../types";
+import type { FormInputProps } from "../types/form.types";
 
 /**
  * FormInput - 재사용 가능한 입력 필드 컴포넌트

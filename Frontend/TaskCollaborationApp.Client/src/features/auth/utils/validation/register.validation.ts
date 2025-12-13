@@ -1,4 +1,7 @@
-import type { RegisterFormData, ValidationErrors } from "../types";
+import type {
+  RegisterFormData,
+  ValidationErrors,
+} from "../../types/form.types";
 
 /**
  * validateField - 단일 필드 유효성 검사

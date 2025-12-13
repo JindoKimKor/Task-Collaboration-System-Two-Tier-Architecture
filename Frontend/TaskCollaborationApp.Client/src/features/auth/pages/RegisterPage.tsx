@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { register } from "../store/authSlice";
 import { RegisterForm } from "../components/RegisterForm";
-import type { RegisterFormData } from "../types";
+import type { RegisterFormData } from "../types/form.types";
 
 /**
  * RegisterPage - 회원가입 페이지 (Container Component)

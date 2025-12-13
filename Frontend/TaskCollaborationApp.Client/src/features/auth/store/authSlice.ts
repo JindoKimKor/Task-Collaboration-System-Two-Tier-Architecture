@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "../services/authService";
-import type { AuthState, RegisterFormData } from "../types";
+import type { AuthState } from "../types/state.types";
+import type { RegisterFormData } from "../types/form.types";
 
 /**
  * initialState - 앱 시작 시 auth 상태의 초기값

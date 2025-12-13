@@ -1,18 +1,24 @@
 // ============================================
-// Components (Task #8)
+// Components (Task #9, #15)
 // ============================================
 
 /**
- * RegisterForm - 회원가입 폼 UI 컴포넌트
+ * FormInput - 재사용 가능한 입력 필드 컴포넌트
+ * Client 활용: RegisterForm, LoginForm에서 각 필드 렌더링
+ */
+export { FormInput } from "./components/FormInput";
+
+/**
+ * RegisterForm - 회원가입 폼 컴포넌트
  * Client 활용: RegisterPage에서 렌더링
  */
 export { RegisterForm } from "./components/RegisterForm";
 
 /**
- * FormInput - 재사용 가능한 입력 필드 컴포넌트
- * Client 활용: RegisterForm, LoginForm 등에서 사용
+ * LoginForm - 로그인 폼 컴포넌트
+ * Client 활용: LoginPage에서 렌더링
  */
-export { FormInput } from "./components/FormInput";
+export { LoginForm } from "./components/LoginForm";
 
 // ============================================
 // Pages (Task #10)
@@ -73,18 +79,31 @@ export { clearError } from "./store/authSlice";
 export { authService } from "./services/authService";
 
 // ============================================
-// Types (Task #8 + Task #9)
+// Types (Task #8, #9, #15)
 // ============================================
 
+/**
+ * Form Types - 폼 관련 타입
+ * Client 활용: RegisterForm, LoginForm, FormInput, useRegisterForm, useLoginForm, validation.ts
+ */
 export type {
-  // Task #8: Form types
   RegisterFormData,
   RegisterFormProps,
   ValidationErrors,
   FormInputProps,
-  // Task #9: Auth state types
-  User,
-  AuthState,
-  AuthResponse,
-  LoginCredentials,
-} from "./types";
+  LoginFormData,
+  LoginFormProps,
+  LoginValidationErrors,
+} from "./types/form.types";
+
+/**
+ * State Types - Redux 상태 관련 타입
+ * Client 활용: authSlice, useAppSelector
+ */
+export type { User, AuthState } from "./types/state.types";
+
+/**
+ * API Types - API 요청/응답 관련 타입
+ * Client 활용: authService, authSlice thunk
+ */
+export type { AuthResponse, LoginCredentials } from "./types/api.types";
