@@ -26,14 +26,26 @@ namespace TaskCollaborationApp.API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(TaskListResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseDto), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetTasks(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20,
             [FromQuery] string? status = null,
             [FromQuery] int? assignedTo = null,
             [FromQuery] int? createdBy = null,
-            [FromQuery] string? search = null)
+            [FromQuery] string? search = null,
+            [FromQuery] bool includeArchived = false)
         {
+            // Only Admin can request archived tasks
+            if (includeArchived && GetCurrentUserRole() != "Admin")
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new ErrorResponseDto
+                {
+                    Error = "Forbidden",
+                    Message = "Only administrators can view archived tasks"
+                });
+            }
+
             TaskStatus? taskStatus = null;
             if (!string.IsNullOrEmpty(status) && Enum.TryParse<TaskStatus>(status, out var parsed))
             {
@@ -41,7 +53,7 @@ namespace TaskCollaborationApp.API.Controllers
             }
 
             var result = await _taskService.GetTasksAsync(
-                page, pageSize, taskStatus, assignedTo, createdBy, search);
+                page, pageSize, taskStatus, assignedTo, createdBy, search, includeArchived);
 
             return Ok(result);
         }

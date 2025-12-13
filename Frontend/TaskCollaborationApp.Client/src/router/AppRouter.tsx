@@ -7,6 +7,7 @@ import { CreateTaskPage } from "../features/task/pages/CreateTaskPage";
 import { EditTaskPage } from "../features/task/pages/EditTaskPage";
 import { MyTasksPage } from "../features/task/pages/MyTasksPage";
 import { AssignedTasksPage } from "../features/task/pages/AssignedTasksPage";
+import { AdminTasksPage } from "../features/task/pages/AdminTasksPage";
 
 /**
  * ProtectedRoute - 인증된 사용자만 접근 가능한 라우트
@@ -104,6 +105,16 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute>
               <EditTaskPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin 전용 - 모든 태스크 (Protected) */}
+        <Route
+          path="/admin/tasks"
+          element={
+            <ProtectedRoute>
+              <AdminTasksPage />
             </ProtectedRoute>
           }
         />

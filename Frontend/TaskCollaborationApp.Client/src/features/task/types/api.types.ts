@@ -49,7 +49,7 @@ export interface TaskListResponseDto {
 /**
  * TaskQueryParams - 태스크 조회 시 필터 파라미터
  *
- * GET /api/tasks?status=ToDo&assignedTo=1 등
+ * GET /api/tasks?status=ToDo&assignedTo=1&includeArchived=true 등
  */
 export interface TaskQueryParams {
   page?: number;
@@ -58,6 +58,7 @@ export interface TaskQueryParams {
   assignedTo?: number;
   createdBy?: number;
   search?: string;
+  includeArchived?: boolean;
 }
 
 /**

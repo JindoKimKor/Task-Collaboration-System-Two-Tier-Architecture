@@ -81,6 +81,18 @@ export const AssignedTasksPage = () => {
               >
                 Assigned to Me
               </button>
+              {user?.role === "Admin" && (
+                <button
+                  onClick={() => navigate("/admin/tasks")}
+                  className={`px-3 py-1 text-sm rounded ${
+                    isActive("/admin/tasks")
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  All Tasks (Admin)
+                </button>
+              )}
             </nav>
             <button
               onClick={() => navigate("/tasks/new")}
