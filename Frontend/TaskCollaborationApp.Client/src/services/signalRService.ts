@@ -3,6 +3,7 @@ import {
   HubConnection,
   HubConnectionState,
 } from "@microsoft/signalr";
+import type { TaskResponseDto } from "../features/task/types/api.types";
 
 /**
  * SignalR Service - 실시간 통신을 위한 SignalR 클라이언트
@@ -112,10 +113,86 @@ const leaveBoard = async (): Promise<void> => {
   }
 };
 
+// ===== Event Handlers =====
+
+/**
+ * onTaskCreated - 태스크 생성 이벤트 리스너 등록
+ */
+const onTaskCreated = (
+  callback: (data: { task: TaskResponseDto; createdBy: string }) => void
+): void => {
+  getConnection().on("TaskCreated", callback);
+};
+
+/**
+ * onTaskUpdated - 태스크 수정 이벤트 리스너 등록
+ */
+const onTaskUpdated = (
+  callback: (data: { task: TaskResponseDto }) => void
+): void => {
+  getConnection().on("TaskUpdated", callback);
+};
+
+/**
+ * onTaskDeleted - 태스크 삭제 이벤트 리스너 등록
+ */
+const onTaskDeleted = (callback: (data: { taskId: number }) => void): void => {
+  getConnection().on("TaskDeleted", callback);
+};
+
+/**
+ * onTaskAssigned - 태스크 할당 이벤트 리스너 등록
+ */
+const onTaskAssigned = (
+  callback: (data: { task: TaskResponseDto; assignedToUserId: number }) => void
+): void => {
+  getConnection().on("TaskAssigned", callback);
+};
+
+// ===== Event Handler Cleanup =====
+
+/**
+ * offTaskCreated - 태스크 생성 이벤트 리스너 해제
+ */
+const offTaskCreated = (): void => {
+  getConnection().off("TaskCreated");
+};
+
+/**
+ * offTaskUpdated - 태스크 수정 이벤트 리스너 해제
+ */
+const offTaskUpdated = (): void => {
+  getConnection().off("TaskUpdated");
+};
+
+/**
+ * offTaskDeleted - 태스크 삭제 이벤트 리스너 해제
+ */
+const offTaskDeleted = (): void => {
+  getConnection().off("TaskDeleted");
+};
+
+/**
+ * offTaskAssigned - 태스크 할당 이벤트 리스너 해제
+ */
+const offTaskAssigned = (): void => {
+  getConnection().off("TaskAssigned");
+};
+
 export const signalRService = {
   getConnection,
   start,
   stop,
   joinBoard,
   leaveBoard,
+  // Event handlers
+  onTaskCreated,
+  onTaskUpdated,
+  onTaskDeleted,
+  onTaskAssigned,
+  // Event cleanup
+  offTaskCreated,
+  offTaskUpdated,
+  offTaskDeleted,
+  offTaskAssigned,
 };

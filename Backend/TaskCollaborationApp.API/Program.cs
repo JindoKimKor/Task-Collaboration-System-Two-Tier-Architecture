@@ -64,6 +64,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Service Layer - Task Services
 builder.Services.AddScoped<ITaskService, TaskService>();
 
+// Service Layer - Notification Services
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 // SignalR
 builder.Services.AddSignalR();
 
@@ -82,6 +85,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwtSettings.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        };
+
+        // SignalR uses WebSocket which cannot send HTTP headers
+        // JWT token is passed via query string instead
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 

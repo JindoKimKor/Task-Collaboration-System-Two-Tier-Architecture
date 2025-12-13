@@ -10,6 +10,7 @@ import {
 } from "./taskThunks";
 
 import type { TaskState } from "../types/state.types";
+import type { TaskResponseDto } from "../types/api.types";
 
 /**
  * initialState - 앱 시작 시 task 상태의 초기값
@@ -62,6 +63,55 @@ const taskSlice = createSlice({
      */
     clearSelectedTask: (state) => {
       state.selectedTask = null;
+    },
+
+    // ============================================
+    // SignalR Event Reducers (Task #56)
+    // ============================================
+
+    /**
+     * taskCreatedFromSignalR - SignalR로 태스크 생성 이벤트 수신
+     *
+     * Client 활용:
+     * - 다른 사용자가 태스크 생성 시 실시간 반영
+     * - 중복 방지: 이미 존재하는 태스크는 추가하지 않음
+     */
+    taskCreatedFromSignalR: (state, action: { payload: TaskResponseDto }) => {
+      const exists = state.tasks.some((t) => t.id === action.payload.id);
+      if (!exists) {
+        state.tasks.unshift(action.payload);
+        state.totalCount += 1;
+      }
+    },
+
+    /**
+     * taskUpdatedFromSignalR - SignalR로 태스크 수정 이벤트 수신
+     *
+     * Client 활용:
+     * - 다른 사용자가 태스크 수정 시 실시간 반영
+     */
+    taskUpdatedFromSignalR: (state, action: { payload: TaskResponseDto }) => {
+      const index = state.tasks.findIndex((t) => t.id === action.payload.id);
+      if (index !== -1) {
+        state.tasks[index] = action.payload;
+      }
+      if (state.selectedTask?.id === action.payload.id) {
+        state.selectedTask = action.payload;
+      }
+    },
+
+    /**
+     * taskDeletedFromSignalR - SignalR로 태스크 삭제 이벤트 수신
+     *
+     * Client 활용:
+     * - 다른 사용자가 태스크 삭제 시 실시간 반영
+     */
+    taskDeletedFromSignalR: (state, action: { payload: number }) => {
+      state.tasks = state.tasks.filter((t) => t.id !== action.payload);
+      state.totalCount -= 1;
+      if (state.selectedTask?.id === action.payload) {
+        state.selectedTask = null;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -200,5 +250,11 @@ const taskSlice = createSlice({
   },
 });
 
-export const { clearError, clearSelectedTask } = taskSlice.actions;
+export const {
+  clearError,
+  clearSelectedTask,
+  taskCreatedFromSignalR,
+  taskUpdatedFromSignalR,
+  taskDeletedFromSignalR,
+} = taskSlice.actions;
 export default taskSlice.reducer;

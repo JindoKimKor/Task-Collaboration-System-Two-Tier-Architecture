@@ -13,10 +13,12 @@ namespace TaskCollaborationApp.API.Services
     public class TaskService : ITaskService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
 
-        public TaskService(IUnitOfWork unitOfWork)
+        public TaskService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
 
         /// <inheritdoc />
@@ -104,7 +106,12 @@ namespace TaskCollaborationApp.API.Services
 
             // Reload with navigation properties
             var createdTask = await _unitOfWork.Tasks.GetByIdWithDetailsAsync(task.Id);
-            return MapToDto(createdTask!);
+            var response = MapToDto(createdTask!);
+
+            // Send real-time notification
+            await _notificationService.NotifyTaskCreatedAsync(response, createdTask!.CreatedBy?.Name ?? "Unknown");
+
+            return response;
         }
 
         /// <inheritdoc />
@@ -143,7 +150,12 @@ namespace TaskCollaborationApp.API.Services
 
             // Reload with navigation properties
             var updatedTask = await _unitOfWork.Tasks.GetByIdWithDetailsAsync(id);
-            return MapToDto(updatedTask!);
+            var response = MapToDto(updatedTask!);
+
+            // Send real-time notification
+            await _notificationService.NotifyTaskUpdatedAsync(response);
+
+            return response;
         }
 
         /// <inheritdoc />
@@ -164,6 +176,9 @@ namespace TaskCollaborationApp.API.Services
 
             await _unitOfWork.Tasks.DeleteAsync(task);
             await _unitOfWork.SaveChangesAsync();
+
+            // Send real-time notification
+            await _notificationService.NotifyTaskDeletedAsync(id);
         }
 
         /// <summary>

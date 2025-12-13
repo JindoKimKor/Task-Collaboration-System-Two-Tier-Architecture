@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { fetchTasks } from "../store/taskThunks";
 import { KanbanBoard } from "../components/KanbanBoard";
-import { signalRService } from "../../../services/signalRService";
 
 /**
  * BoardPage - Kanban 보드 페이지 (Container)
@@ -38,38 +37,6 @@ export const BoardPage = () => {
   useEffect(() => {
     dispatch(fetchTasks({ pageSize: 100 }));
   }, [dispatch]);
-
-  /**
-   * SignalR 연결 관리
-   *
-   * 페이지 마운트 시 연결 → 그룹 참가
-   * 페이지 언마운트 시 그룹 탈퇴 → 연결 해제
-   */
-  useEffect(() => {
-    const connectSignalR = async () => {
-      try {
-        await signalRService.start();
-        await signalRService.joinBoard();
-      } catch (error) {
-        console.error("SignalR connection failed:", error);
-      }
-    };
-
-    connectSignalR();
-
-    // Cleanup: 페이지 떠날 때
-    return () => {
-      const disconnectSignalR = async () => {
-        try {
-          await signalRService.leaveBoard();
-          await signalRService.stop();
-        } catch (error) {
-          console.error("SignalR disconnect failed:", error);
-        }
-      };
-      disconnectSignalR();
-    };
-  }, []);
 
   /**
    * handleTaskClick - 태스크 카드 클릭 핸들러
