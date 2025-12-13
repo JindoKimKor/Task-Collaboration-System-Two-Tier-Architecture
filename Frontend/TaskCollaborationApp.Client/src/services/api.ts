@@ -11,7 +11,7 @@ import axios from "axios";
  * 다른 feature(Task, User)에서도 이 instance를 import해서 사용
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://localhost:7001/api",
+  baseURL: import.meta.env.VITE_API_URL || "https://localhost:7158/api",
   headers: {
     "Content-Type": "application/json",
   },

@@ -15,6 +15,16 @@ export { RegisterForm } from "./components/RegisterForm";
 export { FormInput } from "./components/FormInput";
 
 // ============================================
+// Pages (Task #10)
+// ============================================
+
+/**
+ * RegisterPage - 회원가입 페이지 (Container)
+ * Client 활용: /register 경로에서 렌더링
+ */
+export { RegisterPage } from "./pages/RegisterPage";
+
+// ============================================
 // Hooks (Task #8)
 // ============================================
 
