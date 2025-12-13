@@ -54,6 +54,18 @@ export { CreateTaskPage } from "./pages/CreateTaskPage";
  */
 export { EditTaskPage } from "./pages/EditTaskPage";
 
+/**
+ * MyTasksPage - 내가 생성한 태스크 페이지 (Container)
+ * Client 활용: /tasks/my 경로에서 렌더링
+ */
+export { MyTasksPage } from "./pages/MyTasksPage";
+
+/**
+ * AssignedTasksPage - 나에게 할당된 태스크 페이지 (Container)
+ * Client 활용: /tasks/assigned 경로에서 렌더링
+ */
+export { AssignedTasksPage } from "./pages/AssignedTasksPage";
+
 // ============================================
 // Store (Task #33)
 // ============================================
@@ -93,6 +105,18 @@ export { updateTask } from "./store/taskThunks";
  * Client 활용: TaskDetailsPage에서 dispatch(deleteTask(id))
  */
 export { deleteTask } from "./store/taskThunks";
+
+/**
+ * fetchMyTasks - 내가 생성한 태스크 조회 async thunk
+ * Client 활용: MyTasksPage에서 dispatch(fetchMyTasks())
+ */
+export { fetchMyTasks } from "./store/taskThunks";
+
+/**
+ * fetchAssignedTasks - 나에게 할당된 태스크 조회 async thunk
+ * Client 활용: AssignedTasksPage에서 dispatch(fetchAssignedTasks())
+ */
+export { fetchAssignedTasks } from "./store/taskThunks";
 
 /**
  * clearError - 에러 메시지 초기화 액션

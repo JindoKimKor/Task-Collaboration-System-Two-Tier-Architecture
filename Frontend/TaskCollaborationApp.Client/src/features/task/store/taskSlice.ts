@@ -5,6 +5,8 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  fetchMyTasks,
+  fetchAssignedTasks,
 } from "./taskThunks";
 
 import type { TaskState } from "../types/state.types";
@@ -156,6 +158,42 @@ const taskSlice = createSlice({
         }
       })
       .addCase(deleteTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // ============================================
+      // FetchMyTasks Thunk (Task #45)
+      // ============================================
+      .addCase(fetchMyTasks.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyTasks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.tasks = action.payload.data;
+        state.totalCount = action.payload.totalCount;
+        state.page = action.payload.page;
+        state.pageSize = action.payload.pageSize;
+      })
+      .addCase(fetchMyTasks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // ============================================
+      // FetchAssignedTasks Thunk (Task #45)
+      // ============================================
+      .addCase(fetchAssignedTasks.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAssignedTasks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.tasks = action.payload.data;
+        state.totalCount = action.payload.totalCount;
+        state.page = action.payload.page;
+        state.pageSize = action.payload.pageSize;
+      })
+      .addCase(fetchAssignedTasks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

@@ -181,3 +181,67 @@ export const deleteTask = createAsyncThunk(
     }
   }
 );
+
+/**
+ * fetchMyTasks - 내가 생성한 태스크 조회 비동기 액션
+ *
+ * Client 활용:
+ * - MyTasksPage에서 dispatch(fetchMyTasks()) 호출
+ * - pending: 로딩 스피너 표시
+ * - fulfilled: Kanban 보드에 내가 생성한 태스크만 표시
+ * - rejected: 에러 메시지 표시
+ *
+ * 언제 호출되는가:
+ * - MyTasksPage 마운트 시
+ */
+export const fetchMyTasks = createAsyncThunk(
+  "task/fetchMyTasks",
+  async (params: TaskQueryParams | undefined, { rejectWithValue }) => {
+    try {
+      const response = await taskService.getMyTasks(params);
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { data?: { message?: string } };
+        };
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Failed to load my tasks"
+        );
+      }
+      return rejectWithValue("Failed to load my tasks");
+    }
+  }
+);
+
+/**
+ * fetchAssignedTasks - 나에게 할당된 태스크 조회 비동기 액션
+ *
+ * Client 활용:
+ * - AssignedTasksPage에서 dispatch(fetchAssignedTasks()) 호출
+ * - pending: 로딩 스피너 표시
+ * - fulfilled: Kanban 보드에 나에게 할당된 태스크만 표시
+ * - rejected: 에러 메시지 표시
+ *
+ * 언제 호출되는가:
+ * - AssignedTasksPage 마운트 시
+ */
+export const fetchAssignedTasks = createAsyncThunk(
+  "task/fetchAssignedTasks",
+  async (params: TaskQueryParams | undefined, { rejectWithValue }) => {
+    try {
+      const response = await taskService.getAssignedTasks(params);
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { data?: { message?: string } };
+        };
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Failed to load assigned tasks"
+        );
+      }
+      return rejectWithValue("Failed to load assigned tasks");
+    }
+  }
+);

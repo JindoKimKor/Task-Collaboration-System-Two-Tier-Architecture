@@ -5,6 +5,8 @@ import { BoardPage } from "../features/task/pages/BoardPage";
 import { TaskDetailsPage } from "../features/task/pages/TaskDetailsPage";
 import { CreateTaskPage } from "../features/task/pages/CreateTaskPage";
 import { EditTaskPage } from "../features/task/pages/EditTaskPage";
+import { MyTasksPage } from "../features/task/pages/MyTasksPage";
+import { AssignedTasksPage } from "../features/task/pages/AssignedTasksPage";
 
 /**
  * ProtectedRoute - 인증된 사용자만 접근 가능한 라우트
@@ -62,6 +64,26 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute>
               <CreateTaskPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 내가 생성한 태스크 페이지 (Protected) */}
+        <Route
+          path="/tasks/my"
+          element={
+            <ProtectedRoute>
+              <MyTasksPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 나에게 할당된 태스크 페이지 (Protected) */}
+        <Route
+          path="/tasks/assigned"
+          element={
+            <ProtectedRoute>
+              <AssignedTasksPage />
             </ProtectedRoute>
           }
         />
