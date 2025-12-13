@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { login } from "../store/authThunks";
 import { LoginForm } from "../components/LoginForm";
+import { GoogleSignInButton } from "../components/GoogleSignInButton";
 import type { LoginFormData } from "../types/form.types";
 
 /**
@@ -59,6 +60,16 @@ export const LoginPage = () => {
 
         {/* LoginForm에 상태와 핸들러 전달 */}
         <LoginForm onSubmit={handleSubmit} loading={loading} error={error} />
+
+        {/* 구분선 */}
+        <div className="flex items-center my-4">
+          <div className="flex-1 border-t border-gray-300"></div>
+          <span className="px-4 text-gray-500 text-sm">or</span>
+          <div className="flex-1 border-t border-gray-300"></div>
+        </div>
+
+        {/* Google 로그인 버튼 */}
+        <GoogleSignInButton />
 
         {/* 회원가입 페이지 링크 */}
         <p className="mt-4 text-center text-gray-600">

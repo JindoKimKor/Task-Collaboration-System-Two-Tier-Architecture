@@ -109,3 +109,37 @@ export const fetchCurrentUser = createAsyncThunk(
     }
   }
 );
+
+/**
+ * googleLogin - Google OAuth 로그인 비동기 액션
+ *
+ * Client 활용:
+ * - GoogleSignInButton에서 onSuccess 시 dispatch(googleLogin(credential)) 호출
+ * - pending: 로딩 표시
+ * - fulfilled: 로그인 상태로 전환, /board로 이동
+ * - rejected: 에러 메시지 표시 ("Google auth failed" 등)
+ *
+ * localStorage 저장: 새로고침 후에도 로그인 유지하기 위해
+ */
+export const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (idToken: string, { rejectWithValue }) => {
+    try {
+      const response = await authService.googleLogin(idToken);
+      // 성공 시 token을 localStorage에 저장 (새로고침 후에도 유지)
+      localStorage.setItem("token", response.token);
+      return response;
+    } catch (error: unknown) {
+      // 서버 에러 메시지 추출하여 반환
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { data?: { message?: string } };
+        };
+        return rejectWithValue(
+          axiosError.response?.data?.message || "Google login failed"
+        );
+      }
+      return rejectWithValue("Google login failed");
+    }
+  }
+);

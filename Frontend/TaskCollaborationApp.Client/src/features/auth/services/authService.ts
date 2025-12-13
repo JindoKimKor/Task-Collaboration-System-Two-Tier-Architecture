@@ -66,4 +66,20 @@ export const authService = {
     const response = await api.get<UserResponse>("/auth/me");
     return response.data;
   },
+
+  /**
+   * googleLogin - Google OAuth 로그인 API 호출
+   *
+   * Client 활용:
+   * - GoogleSignInButton에서 Google 로그인 성공 시 호출
+   * - dispatch(googleLogin(idToken)) → 이 함수 호출 → Redux store 업데이트
+   *
+   * @param idToken - Google에서 받은 ID Token (credential)
+   */
+  googleLogin: async (idToken: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>("/auth/google", {
+      idToken,
+    });
+    return response.data;
+  },
 };

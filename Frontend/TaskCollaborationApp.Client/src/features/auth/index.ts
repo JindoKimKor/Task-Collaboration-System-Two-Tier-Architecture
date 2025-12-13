@@ -1,5 +1,5 @@
 // ============================================
-// Components (Task #9, #15)
+// Components (Task #9, #15, #24)
 // ============================================
 
 /**
@@ -19,6 +19,12 @@ export { RegisterForm } from "./components/RegisterForm";
  * Client 활용: LoginPage에서 렌더링
  */
 export { LoginForm } from "./components/LoginForm";
+
+/**
+ * GoogleSignInButton - Google 로그인 버튼 컴포넌트
+ * Client 활용: LoginPage에서 렌더링
+ */
+export { GoogleSignInButton } from "./components/GoogleSignInButton";
 
 // ============================================
 // Pages (Task #10, #17)
@@ -47,7 +53,7 @@ export { LoginPage } from "./pages/LoginPage";
 export { useRegisterForm } from "./hooks/useRegisterForm";
 
 // ============================================
-// Store (Task #9, #16, #22)
+// Store (Task #9, #16, #22, $24)
 // ============================================
 
 /**
@@ -73,6 +79,12 @@ export { login } from "./store/authThunks";
  * Client 활용: App.tsx에서 앱 시작 시 dispatch(fetchCurrentUser())
  */
 export { fetchCurrentUser } from "./store/authThunks";
+
+/**
+ * googleLogin - Google OAuth 로그인 async thunk
+ * Client 활용: GoogleSignInButton에서 dispatch(googleLogin(credential))
+ */
+export { googleLogin } from "./store/authThunks";
 
 /**
  * logout - 로그아웃 액션

@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { fetchCurrentUser } from "./features/auth";
@@ -8,6 +9,7 @@ import { AppRouter } from "./router/AppRouter";
  *
  * Client 활용:
  * - main.tsx의 Provider 내부에서 렌더링
+ * - GoogleOAuthProvider로 Google Sign-In 기능 제공
  * - AppRouter를 통해 모든 페이지 라우팅 처리
  */
 function App() {
@@ -21,7 +23,11 @@ function App() {
     }
   }, []);
 
-  return <AppRouter />;
+  return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <AppRouter />
+    </GoogleOAuthProvider>
+  );
 }
 
 export default App;
