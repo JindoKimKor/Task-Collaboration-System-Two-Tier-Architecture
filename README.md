@@ -172,7 +172,7 @@ dotnet run --launch-profile https
 ```
 
 - API: `https://localhost:5001`
-- Swagger: `https://localhost:5009/swagger`
+- Swagger: `https://localhost:5001/swagger`
 
 ### 3. Frontend Setup
 
